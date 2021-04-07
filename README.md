@@ -1,4 +1,4 @@
-# Undergraduate Research
+# Undergraduate Research Project
 > The Importance of Battery Technologies on Electric Aircraft.
 
 ## Table of contents
