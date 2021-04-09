@@ -19,7 +19,7 @@
 ## General info
 The main objective of this project is to show how the batteries of the future (lithium-sulfur, lithium-air, solid state, graphene etc.) will impact the electric aircraft area. Nowadays, the low energy density and the slow recharging time of batteries are the principal factors that prevent the substitution of combustion airplanes to electric ones, principally following the fact that gasoline have 100x more energy density than a lithium-ion battery and you can refuel an conventional airplane in 30 - 40 minutes (an electric airplane would take hours, even day to be fully charged for the same size aircraft).
 
-In 2020, airplanes were responsible for 2.5% world's global carbon emissions <sup>1</sup>. Seems not much, principally when compared with the 15% world's global carbon emissions from cars <sup>2</sup>. That's because we are not considering the fact there is 1.4 billions cars <sup>3</sup> and 25 900 airplanes <sup>4</sup> worldwide in 2019 (estimated).
+In 2020, airplanes were responsible for 2.5% world's global carbon emissions<sup>**1**</sup>. Seems not much, principally when compared with the 15% world's global carbon emissions from cars<sup>**2**</sup>. That's because we are not considering the fact there is 1.4 billions cars<sup>**3**</sup> and 25 900 airplanes<sup>**4**</sup> worldwide in 2019 (estimated).
 
 Also, according to BEIS/DEFRA Greenhouse Gas Conversion Factors 2019, a domestic flight emits 254g of CO2 per km travelled, while a car with 4 passengers emits 43g and with 1 passenger, 171g.
 
