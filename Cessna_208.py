@@ -3,9 +3,7 @@
 # Created:  Feb 2017, M. Vegh 
 # Modified: Feb 2018, M. Vegh 
 # Modified: Mar 2020, M. Clarke 
-
-""" setup file for the Cessna_172, current values only used to test General Aviation script
-"""
+# Modified: Apr 2021, V. Tanigawa 
 
 # ----------------------------------------------------------------------
 #   Imports
@@ -27,24 +25,24 @@ def vehicle_setup():
     #   Initialize the Vehicle
     # ------------------------------------------------------------------        
     vehicle                                     = SUAVE.Vehicle()
-    vehicle.tag                                 = 'Cessna_172_SP'
+    vehicle.tag                                 = 'Cessna_208_Caravan'
                                                 
     # ------------------------------------------------------------------
     #   Vehicle-level Properties
     # ------------------------------------------------------------------    
 
     # mass properties
-    vehicle.mass_properties.max_takeoff         = 2550. * Units.pounds
-    vehicle.mass_properties.takeoff             = 2550. * Units.pounds
-    vehicle.mass_properties.max_zero_fuel       = 2550. * Units.pounds
+    vehicle.mass_properties.max_takeoff         = 8750. * Units.pounds #modified
+    vehicle.mass_properties.takeoff             = 8750. * Units.pounds #modified
+    vehicle.mass_properties.max_zero_fuel       = 8750. * Units.pounds #modified
     vehicle.mass_properties.cargo               = 0. 
                                                
     # envelope properties                       
-    vehicle.envelope.ultimate_load              = 5.7
-    vehicle.envelope.limit_load                 = 3.8
+    vehicle.envelope.ultimate_load              = 4.68 #modified
+    vehicle.envelope.limit_load                 = 3.8 #modified
                                                 
-    cruise_speed                                = 124. * Units.kts
-    altitude                                    = 8500. * Units.ft
+    cruise_speed                                = 184. * Units.kts #modified
+    altitude                                    = 10000. * Units.ft #modified
     atmo                                        = SUAVE.Analyses.Atmospheric.US_Standard_1976()
     freestream                                  = atmo.compute_values (0.)
     freestream0                                 = atmo.compute_values (altitude)
@@ -53,8 +51,8 @@ def vehicle_setup():
     vehicle.design_mach_number                  =  mach_number
                                                 
     # basic parameters                          
-    vehicle.reference_area                      = 174. * Units.feet**2       
-    vehicle.passengers                          = 4
+    vehicle.reference_area                      = 279. * Units.feet**2 #modified    
+    vehicle.passengers                          = 14 #modified
 
     # ------------------------------------------------------------------        
     #   Main Wing
@@ -63,9 +61,9 @@ def vehicle_setup():
     wing                                        = SUAVE.Components.Wings.Main_Wing()
     wing.tag                                    = 'main_wing'    
     wing.sweeps.quarter_chord                   = 0.0 * Units.deg
-    wing.thickness_to_chord                     = 0.12
-    wing.areas.reference                        = 174. * Units.feet**2
-    wing.spans.projected                        = 36.  * Units.feet + 1. * Units.inches
+    wing.thickness_to_chord                     = 0.12 
+    wing.areas.reference                        = 279. * Units.feet**2 #modified
+    wing.spans.projected                        = 52.  * Units.feet + 1. * Units.inches #modified
     wing.chords.root                            = 66. * Units.inches
     wing.chords.tip                             = 45. * Units.inches
     wing.chords.mean_aerodynamic                = 58. * Units.inches
@@ -112,7 +110,7 @@ def vehicle_setup():
     wing.sweeps.quarter_chord                   = 0.0 * Units.deg
     wing.thickness_to_chord                     = 0.12
     wing.areas.reference                        = 5800. * Units.inches**2
-    wing.spans.projected                        = 136.  * Units.inches
+    wing.spans.projected                        = 246.  * Units.inches #modified
     wing.chords.root                            = 55. * Units.inches
     wing.chords.tip                             = 30. * Units.inches
     wing.chords.mean_aerodynamic                = 43. * Units.inches 
@@ -165,10 +163,10 @@ def vehicle_setup():
     fuselage.tag                                = 'fuselage'
     fuselage.number_coach_seats                 = 4.       
     fuselage.tag                                = 'fuselage'    
-    fuselage.differential_pressure              = 8*Units.psi                    # Maximum differential pressure
-    fuselage.width                              = 42.         * Units.inches     # Width of the fuselage
-    fuselage.heights.maximum                    = 62. * Units.inches    # Height of the fuselage
-    fuselage.lengths.total                      = 326.         * Units.inches            # Length of the fuselage
+    fuselage.differential_pressure              = 8*Units.psi                                 # Maximum differential pressure
+    fuselage.width                              = 42.         * Units.inches                  # Width of the fuselage
+    fuselage.heights.maximum                    = 62. * Units.inches                          # Height of the fuselage
+    fuselage.lengths.total                      = 499.         * Units.inches #Modified       # Length of the fuselage 
     fuselage.lengths.empennage                  = 161. * Units.inches  
     fuselage.lengths.cabin                      = 105. * Units.inches
     fuselage.lengths.structure                  = fuselage.lengths.total-fuselage.lengths.empennage 
@@ -231,18 +229,18 @@ def vehicle_setup():
                                                 
     # the engine                    
     net.engine                                  = SUAVE.Components.Energy.Converters.Internal_Combustion_Engine()
-    net.engine.sea_level_power                  = 180. * Units.horsepower
+    net.engine.sea_level_power                  = 675. * Units.horsepower #modified
     net.engine.flat_rate_altitude               = 0.0
-    net.engine.rated_speed                      = 2700. * Units.rpm
+    net.engine.rated_speed                      = 1900. * Units.rpm #modified
     net.engine.power_specific_fuel_consumption  = 0.52 
     
     
     # the prop
     prop = SUAVE.Components.Energy.Converters.Propeller()
-    prop.number_of_blades        = 2.0
+    prop.number_of_blades        = 3.0 #modified
     prop.freestream_velocity     = 119.   * Units.knots
     prop.angular_velocity        = 2650.  * Units.rpm
-    prop.tip_radius              = 76./2. * Units.inches
+    prop.tip_radius              = 105. * Units.inches #modified
     prop.hub_radius              = 8.     * Units.inches
     prop.design_Cl               = 0.8
     prop.design_altitude         = 12000. * Units.feet
