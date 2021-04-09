@@ -81,6 +81,6 @@ Cellphone: +55 11 94254-9986
 
 2. [Ritchie, Hannah. Cars, planes, trains: where do CO2 emissions from transport come from?. *Our World in Data*, October 06, 2020. Accessed: April 04, 2021](https://ourworldindata.org/co2-emissions-from-transport)
 
-3. [Chesterton, Andrew. How many cars are there in the world?. *Carsguide*, October 22, 2020. Accessed: August 06, 2018](https://www.carsguide.com.au/car-advice/how-many-cars-are-there-in-the-world-70629#:~:text=There%20is%20an%20estimated%201.4,at%20around%2018%20per%20cent.)
+3. [Chesterton, Andrew. How many cars are there in the world?. *Carsguide*, August 06, 2018. Accessed: April 04, 2021](https://www.carsguide.com.au/car-advice/how-many-cars-are-there-in-the-world-70629#:~:text=There%20is%20an%20estimated%201.4,at%20around%2018%20per%20cent.)
 
 4. [Mazareanu, E. Size of aircraft fleets by region worldwide: projection 2019-2039. *Statista*, October 21, 2020. Accessed: April 04, 2021](https://www.statista.com/statistics/262971/aircraft-fleets-by-region-worldwide/)
