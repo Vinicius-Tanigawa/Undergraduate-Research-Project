@@ -209,16 +209,17 @@ def vehicle_setup():
 
     # Build Network    
     net = Battery_Propeller() 
-    net.number_of_engines       = 2.
-    net.nacelle_diameter        = 42 * Units.inches
-    net.engine_length           = 0.01 * Units.inches
+    net.number_of_engines       = 1. #modified
+    net.nacelle_diameter        = 8.17 * Units.inches #modified
+    net.engine_length           = 9.25 * Units.inches #modified
     net.areas                   = Data()
     net.areas.wetted            = 0.01*(2*np.pi*0.01/2)    
 
 
-    # Component 1 the ESC
+    # Component 1 the ESC (MagniDrive)
     esc = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
-    esc.efficiency = 0.95 # Gundlach for brushless motors
+    esc.efficiency = 0.989 #modified 
+    esc.mass_properties.mass = 12.0 * Units.kg #modified
     net.esc        = esc
     
     # Component 2 the Propeller
@@ -239,23 +240,23 @@ def vehicle_setup():
     
     net.propeller = prop
 
-    # Component 3 the Motor
+    # Component 3 the Motor (HPDM-250)
     motor                      = SUAVE.Components.Energy.Converters.Motor()
     motor.resistance           = 0.008
-    motor.no_load_current      = 4.5  * Units.ampere
-    motor.speed_constant       = 120. * Units['rpm'] # RPM/volt converted to (rad/s)/volt    
+    motor.no_load_current      = 4.5  * Units.ampere 
+    motor.speed_constant       = 5000. * Units['rpm'] 
     motor.propeller_radius     = prop.tip_radius
     motor.propeller_Cp         = prop.design_power_coefficient
-    motor.gear_ratio           = 12. # Gear ratio
-    motor.gearbox_efficiency   = .98 # Gear box efficiency
-    motor.expected_current     = 160. # Expected current
-    motor.mass_properties.mass = 2.0  * Units.kg
+    motor.gear_ratio           = 4. #modified
+    motor.gearbox_efficiency   = .92 #modified
+    motor.expected_current     = 250. #modified
+    motor.mass_properties.mass = 18.0  * Units.kg #modified
     net.motor                  = motor  
 
     # Component 4 the Payload
     payload                      = SUAVE.Components.Energy.Peripherals.Payload()
     payload.power_draw           = 50. * Units.watts 
-    payload.mass_properties.mass = 5.0 * Units.kg
+    payload.mass_properties.mass = 17.0 * Units.kg #modified
     net.payload                  = payload
     
     # Component 5 the Avionics
