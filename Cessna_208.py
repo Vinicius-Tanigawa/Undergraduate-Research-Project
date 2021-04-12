@@ -19,6 +19,8 @@ from SUAVE.Methods.Geometry.Three_Dimensional.compute_span_location_from_chord_l
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.datcom import datcom
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.Supporting_Functions.trapezoid_ac_x import trapezoid_ac_x
 from SUAVE.Methods.Propulsion import propeller_design
+from SUAVE.Methods.Power.Battery.Sizing import initialize_from_energy_and_power, initialize_from_mass
+from SUAVE.Components.Energy.Networks.Battery_Propeller import Battery_Propeller
 
 def vehicle_setup(): 
     # ------------------------------------------------------------------
@@ -201,41 +203,25 @@ def vehicle_setup():
     #add to vehicle                             
     vehicle.landing_gear                        = landing_gear
                                                 
-    # ------------------------------------------------------------------
-    #   Fuel
-    # ------------------------------------------------------------------    
-    # define fuel weight needed to size fuel system
-    fuel                                        = SUAVE.Attributes.Propellants.Aviation_Gasoline()
-    fuel.mass_properties                        = SUAVE.Components.Mass_Properties() 
-    fuel.number_of_tanks                        = 1.
-    fuel.origin                                 = wing.origin
-    fuel.internal_volume                        = fuel.mass_properties.mass/fuel.density #all of the fuel volume is internal
-    fuel.mass_properties.center_of_gravity      = wing.mass_properties.center_of_gravity
-    fuel.mass_properties.mass                   = 319 *Units.lbs
-    vehicle.fuel                                = fuel
+    #------------------------------------------------------------------
+    # Propulsor
+    #------------------------------------------------------------------
 
-    # ------------------------------------------------------------------
-    #   Piston Propeller Network
-    # ------------------------------------------------------------------    
+    # Build Network    
+    net = Battery_Propeller() 
+    net.number_of_engines       = 2.
+    net.nacelle_diameter        = 42 * Units.inches
+    net.engine_length           = 0.01 * Units.inches
+    net.areas                   = Data()
+    net.areas.wetted            = 0.01*(2*np.pi*0.01/2)    
+
+
+    # Component 1 the ESC
+    esc = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
+    esc.efficiency = 0.95 # Gundlach for brushless motors
+    net.esc        = esc
     
-    # build network
-    net                                         = SUAVE.Components.Energy.Networks.Internal_Combustion_Propeller()
-    net.tag                                     = 'internal_combustion'
-    net.number_of_engines                       = 1.
-    net.nacelle_diameter                        = 42 * Units.inches
-    net.engine_length                           = 0.01 * Units.inches
-    net.areas                                   = Data()
-    net.areas.wetted                            = 0.01
-                                                
-    # the engine                    
-    net.engine                                  = SUAVE.Components.Energy.Converters.Internal_Combustion_Engine()
-    net.engine.sea_level_power                  = 675. * Units.horsepower #modified
-    net.engine.flat_rate_altitude               = 0.0
-    net.engine.rated_speed                      = 1900. * Units.rpm #modified
-    net.engine.power_specific_fuel_consumption  = 0.52 
-    
-    
-    # the prop
+    # Component 2 the Propeller
     prop = SUAVE.Components.Energy.Converters.Propeller()
     prop.number_of_blades        = 3.0 #modified
     prop.freestream_velocity     = 119.   * Units.knots
@@ -252,16 +238,41 @@ def vehicle_setup():
     prop                         = propeller_design(prop)   
     
     net.propeller = prop
-     
-    
-    # add the network to the vehicle
-    vehicle.append_component(net) 
 
-    #find uninstalled avionics weight
-    Wuav                                        = 2. * Units.lbs
-    avionics                                    = SUAVE.Components.Energy.Peripherals.Avionics()
-    avionics.mass_properties.uninstalled        = Wuav
-    vehicle.avionics                            = avionics     
+    # Component 3 the Motor
+    motor                      = SUAVE.Components.Energy.Converters.Motor()
+    motor.resistance           = 0.008
+    motor.no_load_current      = 4.5  * Units.ampere
+    motor.speed_constant       = 120. * Units['rpm'] # RPM/volt converted to (rad/s)/volt    
+    motor.propeller_radius     = prop.tip_radius
+    motor.propeller_Cp         = prop.design_power_coefficient
+    motor.gear_ratio           = 12. # Gear ratio
+    motor.gearbox_efficiency   = .98 # Gear box efficiency
+    motor.expected_current     = 160. # Expected current
+    motor.mass_properties.mass = 2.0  * Units.kg
+    net.motor                  = motor  
+
+    # Component 4 the Payload
+    payload                      = SUAVE.Components.Energy.Peripherals.Payload()
+    payload.power_draw           = 50. * Units.watts 
+    payload.mass_properties.mass = 5.0 * Units.kg
+    net.payload                  = payload
+    
+    # Component 5 the Avionics
+    avionics            = SUAVE.Components.Energy.Peripherals.Avionics()
+    avionics.power_draw = 50. * Units.watts
+    net.avionics        = avionics    
+     
+    # Component 6 the Battery
+    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion()
+    bat.mass_properties.mass = 500. * Units.kg  
+    bat.specific_energy      = 350. * Units.Wh/Units.kg
+    bat.resistance           = 0.006
+    bat.max_voltage          = 500.
+    
+    initialize_from_mass(bat,bat.mass_properties.mass)
+    net.battery              = bat 
+    net.voltage              = bat.max_voltage  
 
     # ------------------------------------------------------------------
     #   Vehicle Definition Complete
