@@ -244,7 +244,7 @@ def vehicle_setup():
     motor                      = SUAVE.Components.Energy.Converters.Motor()
     motor.resistance           = 0.008
     motor.no_load_current      = 4.5  * Units.ampere 
-    motor.speed_constant       = 5000. * Units['rpm'] 
+    motor.speed_constant       = 5000. * Units['rpm'] #modified
     motor.propeller_radius     = prop.tip_radius
     motor.propeller_Cp         = prop.design_power_coefficient
     motor.gear_ratio           = 4. #modified
