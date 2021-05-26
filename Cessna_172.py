@@ -55,6 +55,8 @@ def vehicle_setup():
     # basic parameters                          
     vehicle.reference_area                      = 174. * Units.feet**2       
     vehicle.passengers                          = 4
+    vehicle.systems.control        = "fully powered"
+    vehicle.systems.accessories    = "medium range"
 
     # ------------------------------------------------------------------        
     #   Main Wing
@@ -233,6 +235,7 @@ def vehicle_setup():
     net.engine                                  = SUAVE.Components.Energy.Converters.Internal_Combustion_Engine()
     net.engine.sea_level_power                  = 180. * Units.horsepower
     net.engine.flat_rate_altitude               = 0.0
+    net.engine.inputs.speed                     = 2700. * Units.rpm
     net.engine.rated_speed                      = 2700. * Units.rpm
     net.engine.power_specific_fuel_consumption  = 0.52 
     
@@ -250,7 +253,7 @@ def vehicle_setup():
     prop.airfoil_geometry        =  ['../Vehicles/NACA_4412.txt'] 
     prop.airfoil_polars          = [['../Vehicles/NACA_4412_polar_Re_50000.txt' ,'../Vehicles/NACA_4412_polar_Re_100000.txt' ,'../Vehicles/NACA_4412_polar_Re_200000.txt' ,
                                      '../Vehicles/NACA_4412_polar_Re_500000.txt' ,'../Vehicles/NACA_4412_polar_Re_1000000.txt' ]]
-    prop.airfoil_polar_stations  = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]      
+    prop.airfoil_polar_stations  = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]     
     prop                         = propeller_design(prop)   
     
     net.propeller = prop
