@@ -1,5 +1,5 @@
-# Undergraduate Research
-> The Importance of Battery Technologies on Electric Aircraft.
+# Undergraduate Research Project
+> TECHNOLOGICAL DEVELOPMENT OF BATTERIES AND THEIR EFFECTS ON ELECTRIFICATION OF AERONAUTICS
 
 ## Table of contents
 * [General info](#general-info)
@@ -17,13 +17,25 @@
 * [References](#References)
 
 ## General info
-The main objective of this project is to show how the batteries of the future (lithium-sulfur, lithium-air, solid state, graphene etc.) will impact the electric aircraft area. Nowadays, the low energy density and the slow recharging time of batteries are the principal factors that prevent the substitution of combustion airplanes to electric ones, principally following the fact that gasoline have 100x more energy density than a lithium-ion battery and you can refuel an conventional airplane in 30 - 40 minutes (an electric airplane would take hours, even day to be fully charged for the same size aircraft).
+The project aims to demonstrate how the technological development of batteries can
+impact the aeronautical area, in particular, electric aviation. One of the biggest problems that
+prevent the replacement of conventional aeroplanes (which use combustion powertrain
+systems) with electric aeroplanes (electric powertrain systems) is the low energy density of
+the current lithium-ion batteries, resulting in the low flight autonomy of the aircraft and the
+high recharge time.
 
-In 2020, airplanes were responsible for 2.5% world's global carbon emissions<sup>[1]</sup>. Seems not much, principally when compared with the 15% world's global carbon emissions from cars<sup>[2]</sup>. That's because we are not considering the fact there is 1.4 billions cars<sup>[3]</sup> and 25 900 airplanes<sup>[4]</sup> worldwide in 2019 (estimated).
+In addition, considering the 2030 Agenda, it will be assessed whether, with the
+transition to the electric model, there will be a beneficial change for the preservation of nature
+and a better quality of life for society. All of this, within the 17 Sustainable Development
+Goals.
 
-Also, according to BEIS/DEFRA Greenhouse Gas Conversion Factors 2019, a domestic flight emits 254g of CO2 per km travelled, while a car with 4 passengers emits 43g and with 1 passenger, 171g.
+Through research and data gathering regarding new battery technologies and the use of
+simulation software, it will be possible to analyze and compare their effects, to assess
+whether, with the progress of the technological evolution of batteries, there will be a
+movement of substitution conventional aircraft by electric ones, the same effect being seen
+today with land vehicles.
 
-After this information has been shown, there is the reason why this undergraduate research project has this theme about batteries and electric aircraft.
+Keywords: Electric aviation. Batteries. Simulation. Sustainable development.
 
 <!---
 ## Screenshots
@@ -31,8 +43,9 @@ After this information has been shown, there is the reason why this undergraduat
 --->
 
 ## Technologies
-* Python - version 3.8.9
-* SUAVE - version 2.3.1
+* Python - version 3.8.10
+* SUAVE - version 2.4.0
+* OpenLCA - version 1.10.3
 
 <!---
 ## Setup
@@ -52,22 +65,22 @@ To-do list:
 * Finish the vehicle script.
 * Finish the mission script.
 * Research about the batteries and its specifications.
+* Plan the script for OpenLCA.
 
 ## Status
 Project is: _in progress_.
 
-## Inspiration
-Project inspired by The 2030 Agenda for Sustainable Development by UN.
+## Acknoledgement
 
-Special thanks to Professor Osmar Ogashawara for believing in me and accepting being my professor adviser.
+Special thanks to Professor Osmar Ogashawara for believing in me and accepting being my professor adviser and Professor Jorge Henrique Bidinotto for accepting being my professor co-advisor.
 
-Special thanks to Francisco Palazzo Neto, Felipe Odaguil, Diego Morais and Murilo Gallani for helping me with my project, showing me tools and providing me with all the information that I asked for.
+Also I would like to acknowledge Murilo Gallani, Geovana Neves, Francisco Palazzo Neto, Felipe Odaguil and Diego Morais for helping me with my project, showing me tools, providing me with all the information that I needed and leading me to awesome people who could add a lot to my knowledge in relation to the aeronautics area.
 
-Special thanks to Надежда Стелянова Стефанова for supporting me always when I most needed.
+Likewise, I would like to thanks Tiago Gonzalez Fein, Gabriel Wagner Paulin Carvalho and Davi Koschelny Guarniere for being my real friends since high school and Alicia Rossybel Cruz Márquez, Надежда Стелянова Стефанова and Жулиета Викторова Грудева for supporting me always when I most needed.
 
-Special thanks to Tiago Gonzalez Fein, Gabriel Wagner Paulin Carvalho and Davi Koschelny Guarniere for being my real friends since high school.
+Along with, I am greatful for Dragão Branco Aerodesign and SAE Aerodesign Brazil Competition for embracing and feeding my mind with new ideas and skills related to aeronautics as well as the Federal University of São Carlos (UFSCar) for the great education and academic experience.
 
-And last, but not least nor less special, my family whom raised me and believed in my potential during so many years.
+And last, but not least nor less special, my family whom raised me and believed in my potential during all my life.
 
 ## Contact
 Created by Vinicius Kazuhiko Quitakava Tanigawa
