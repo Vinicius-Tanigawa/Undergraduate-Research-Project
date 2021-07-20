@@ -90,10 +90,42 @@ Email: vktanigawa@gmail.com
 Cellphone: +55 11 94254-9986
 
 ## References
-1. [Ritchie, Hannah. Climate change and flying: what share of global CO2 emissions come from aviation?. *Our World in Data*, October 22, 2020. Accessed: April 04, 2021](https://ourworldindata.org/co2-emissions-from-aviation)
 
-2. [Ritchie, Hannah. Cars, planes, trains: where do CO2 emissions from transport come from?. *Our World in Data*, October 06, 2020. Accessed: April 04, 2021](https://ourworldindata.org/co2-emissions-from-transport)
+DEPARTMENT FOR BUSINESS, ENERGY & INDUSTRIAL STRATEGY. T Conversion
+factors 2020: condensed set (for most users), 2020. Disponível em:
+https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors2020. Acesso em: 07 junho 2021.
 
-3. [Chesterton, Andrew. How many cars are there in the world?. *Carsguide*, August 06, 2018. Accessed: April 04, 2021](https://www.carsguide.com.au/car-advice/how-many-cars-are-there-in-the-world-70629#:~:text=There%20is%20an%20estimated%201.4,at%20around%2018%20per%20cent.)
+GUPTA, A. K. Electrification in the Aerospace Industry, 2021. Disponível em:
+https://www.mathworks.com/videos/electrification-in-the-aerospace-industry1620770339818.html?s_tid=srchtitle. Acesso em: 07 junho 2021.
 
-4. [Mazareanu, E. Size of aircraft fleets by region worldwide: projection 2019-2039. *Statista*, October 21, 2020. Accessed: April 04, 2021](https://www.statista.com/statistics/262971/aircraft-fleets-by-region-worldwide/)
+HILDENBRAND, J.; SROCKA, M.; CIROTH, A. OpenLCA, 2021. Disponível em:
+https://www.openlca.org/. Acesso em: 07 junho 2021.
+
+MAZAREANU, E. Projected size of the global aircraft fleet due to coronavirus outbreak
+from 2020 to 2031, 2021. Disponível em: https://www.statista.com/statistics/282237/aircraftfleet-size/. Acesso em: 07 junho 2021.
+
+OKEAFOR, J.-P. How many cars are there in the world? & which country has most
+cars?, 2020. Disponível em: https://naijauto.com/market-news/how-many-cars-are-there-inthe-world-7100. Acesso em: 07 junho 2021.
+
+PARAMOUNT BUSINESS JETS. How long do a fuel stops take?, 2021. Disponível em:
+https://www.paramountbusinessjets.com/faq/how-long-does-a-private-jet-fuel-stop-take.html.
+Acesso em: 07 junho 2021.
+
+RITCHIE, H. Cars, planes, trains: where do CO2 emissions from transport come from?,
+2020. Disponível em: https://ourworldindata.org/co2-emissions-from-transport. Acesso em:
+07 junho 2021.
+
+RITCHIE, H. Climate change and flying: what share of global CO2 emissions come from
+aviation?, 2020. Disponível em: https://ourworldindata.org/co2-emissions-from-aviation.
+Acesso em: 07 junho 2021.
+
+ROGAN, J. Europe’s new aviation vision: is electric the future?, 2020. Disponível em:
+https://www.vennershipley.co.uk/wpcontent/uploads/2020/07/Europes_new_aviation_vision_is_electric_the_future1.pdf. Acesso
+em: 07 junho 2021.
+
+SCHWABER, K.; SUTHERLAND, J. The 2020 Scrum Guide, 2020. Disponível em:
+https://scrumguides.org/scrum-guide.html. Acesso em: 07 junho 2021.
+
+WENDORFF, A. et al. SUAVE: An Aerospace Vehicle Environment for Designing
+Future Aircraft, 2021. Disponível em: https://github.com/suavecode/SUAVE. Acesso em:
+07 junho 2021.
