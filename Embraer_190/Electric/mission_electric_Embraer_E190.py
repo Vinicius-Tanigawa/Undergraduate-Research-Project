@@ -200,76 +200,76 @@ def mission_setup(analyses, vehicle):
     #   First Climb Segment: Constant Speed, Constant Throttle
     # ------------------------------------------------------------------
 
-    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
-    # segment.tag = "climb_250kcas"
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "climb_250kcas"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.takeoff )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.takeoff )
 
-    # # define segment attributes
-    # segment.atmosphere     = atmosphere
-    # segment.planet         = planet
+    # define segment attributes
+    segment.atmosphere     = atmosphere
+    segment.planet         = planet
 
-    # segment.battery_energy = vehicle.propulsors.battery_propeller.battery.max_energy * 0.9
+    segment.battery_energy = vehicle.propulsors.battery_propeller.battery.max_energy * 0.9
 
-    # segment.altitude_start = 0.0   * Units.ft
-    # segment.altitude_end   = 10000 * Units.ft
-    # segment.air_speed      = 250.0 * Units.knots
-    # segment.throttle       = 1.0        
+    segment.altitude_start = 0.0   * Units.ft
+    segment.altitude_end   = 10000 * Units.ft
+    segment.air_speed      = 250.0 * Units.knots
+    segment.throttle       = 1.0        
 
-    # # add to misison
-    # mission.append_segment(segment)
+    # add to misison
+    mission.append_segment(segment)
 
     # ------------------------------------------------------------------
     #   Second Climb Segment: Constant Speed, Constant Throttle
     # ------------------------------------------------------------------
 
-    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
-    # segment.tag = "climb_280kcas"
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "climb_280kcas"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.cruise )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.cruise )
 
-    # # segment attributes
-    # segment.atmosphere   = atmosphere
-    # segment.planet       = planet
+    # segment attributes
+    segment.atmosphere   = atmosphere
+    segment.planet       = planet
 
-    # segment.altitude_end = 32000. * Units.ft
-    # segment.air_speed    = 350.0  * Units.knots
-    # segment.throttle     = 1.0
+    segment.altitude_end = 32000. * Units.ft
+    segment.air_speed    = 350.0  * Units.knots
+    segment.throttle     = 1.0
 
-    # # dummy for post process script
-    # segment.climb_rate   = 0.1
+    # dummy for post process script
+    segment.climb_rate   = 0.1
     
-    # ones_row = segment.state.ones_row
-    # segment.state.unknowns.body_angle = ones_row(1) * 2. * Units.deg     
+    ones_row = segment.state.ones_row
+    segment.state.unknowns.body_angle = ones_row(1) * 2. * Units.deg     
 
-    # # add to mission
-    # mission.append_segment(segment)
+    # add to mission
+    mission.append_segment(segment)
 
     # ------------------------------------------------------------------
     #   Third Climb Segment: Constant Speed, Constant Climb Rate
     # ------------------------------------------------------------------
 
-    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
-    # segment.tag = "climb_final"
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "climb_final"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.cruise )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.cruise )
 
-    # # segment attributes
-    # segment.atmosphere   = atmosphere
-    # segment.planet       = planet
+    # segment attributes
+    segment.atmosphere   = atmosphere
+    segment.planet       = planet
 
-    # segment.altitude_end = 35000. * Units.ft
-    # segment.air_speed    = 390.0  * Units.knots
-    # segment.throttle     = 1.0
+    segment.altitude_end = 35000. * Units.ft
+    segment.air_speed    = 390.0  * Units.knots
+    segment.throttle     = 1.0
 
-    # ones_row = segment.state.ones_row
-    # segment.state.unknowns.body_angle = ones_row(1) * 2. * Units.deg   
+    ones_row = segment.state.ones_row
+    segment.state.unknowns.body_angle = ones_row(1) * 2. * Units.deg   
     
-    # # add to mission
-    # mission.append_segment(segment)
+    # add to mission
+    mission.append_segment(segment)
 
     # ------------------------------------------------------------------
     #   Cruise Segment: constant speed, constant altitude
@@ -299,66 +299,66 @@ def mission_setup(analyses, vehicle):
     #   First Descent Segment: consant speed, constant segment rate
     # ------------------------------------------------------------------
 
-    # segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
-    # segment.tag = "descent_m0_77"
+    segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "descent_m0_77"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.cruise )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.cruise )
 
-    # # segment attributes
-    # segment.atmosphere   = atmosphere
-    # segment.planet       = planet
+    # segment attributes
+    segment.atmosphere   = atmosphere
+    segment.planet       = planet
 
-    # segment.altitude_end = 30500  * Units.ft
-    # segment.air_speed    = 440.0 * Units.knots
-    # segment.descent_rate = 2600. * Units['ft/min']
+    segment.altitude_end = 30500  * Units.ft
+    segment.air_speed    = 440.0 * Units.knots
+    segment.descent_rate = 2600. * Units['ft/min']
 
-    # # add to mission
-    # mission.append_segment(segment)
+    # add to mission
+    mission.append_segment(segment)
 
 
     # ------------------------------------------------------------------
     #   Second Descent Segment: consant speed, constant segment rate
     # ------------------------------------------------------------------
 
-    # segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
-    # segment.tag = "descent_290kcas"
+    segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "descent_290kcas"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.cruise )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.cruise )
 
-    # # segment attributes
-    # segment.atmosphere   = atmosphere
-    # segment.planet       = planet
+    # segment attributes
+    segment.atmosphere   = atmosphere
+    segment.planet       = planet
 
-    # segment.altitude_end = 12000 * Units.ft
-    # segment.air_speed    = 365.0 * Units.knots
-    # segment.descent_rate = 2000. * Units['ft/min']
+    segment.altitude_end = 12000 * Units.ft
+    segment.air_speed    = 365.0 * Units.knots
+    segment.descent_rate = 2000. * Units['ft/min']
 
-    # # append to mission
-    # mission.append_segment(segment)
+    # append to mission
+    mission.append_segment(segment)
 
 
     # ------------------------------------------------------------------
     #   Third Descent Segment: consant speed, constant segment rate
     # ------------------------------------------------------------------
 
-    # segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
-    # segment.tag = "descent_250kcas"
+    segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "descent_250kcas"
 
-    # # connect vehicle configuration
-    # segment.analyses.extend( analyses.cruise )
+    # connect vehicle configuration
+    segment.analyses.extend( analyses.cruise )
 
-    # # segment attributes
-    # segment.atmosphere   = atmosphere
-    # segment.planet       = planet
+    # segment attributes
+    segment.atmosphere   = atmosphere
+    segment.planet       = planet
 
-    # segment.altitude_end = 0.0   * Units.ft
-    # segment.air_speed    = 250.0 * Units.knots
-    # segment.descent_rate = 1500. * Units['ft/min']
+    segment.altitude_end = 0.0   * Units.ft
+    segment.air_speed    = 250.0 * Units.knots
+    segment.descent_rate = 1500. * Units['ft/min']
 
-    # # append to mission
-    # mission.append_segment(segment)
+    # append to mission
+    mission.append_segment(segment)
 
 
     # ------------------------------------------------------------------

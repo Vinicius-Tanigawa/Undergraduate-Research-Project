@@ -101,7 +101,7 @@ def vehicle_setup():
     wing.sweeps.quarter_chord    = 2.74 * Units.deg # (cotan((root chord - tip chord) / wing span))
     wing.thickness_to_chord      = 0.15 #(wing thickness / chord ratio)
     wing.taper                   = 0.616 # (tip chord / root chord)
-    wing.spans.projected         = 15.88 * Units.meter 
+    wing.spans.projected         = 15.875 * Units.meter 
     wing.chords.root             = 1.98 * Units.meter 
     wing.chords.tip              = 1.22 * Units.meter 
     wing.chords.mean_aerodynamic = 1.63 * Units.meter # (root chord * 2/3 * ((1 + taper ratio + (taper ratio)²) / (1 + taper ratio))
@@ -155,7 +155,7 @@ def vehicle_setup():
     wing.thickness_to_chord      = 0.12
     wing.taper                   = 0.62
 
-    wing.spans.projected         = 6.25
+    wing.spans.projected         = 6.248
 
     wing.chords.root             = 1.31
     wing.chords.tip              = 0.81
