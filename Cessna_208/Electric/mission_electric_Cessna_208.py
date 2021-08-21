@@ -28,26 +28,28 @@ from SUAVE.Input_Output.Results import  print_parasite_drag,  \
 # ----------------------------------------------------------------------
 
 def main():
-
-    # define the problem
+    """This function gets the vehicle configuration, analysis settings, and then runs the mission.
+    Once the mission is complete, the results are plotted."""
+    
+    # Extract vehicle configurations and the analysis settings that go with them
     configs, analyses = full_setup()
 
+    # Perform operations needed to make the configurations and analyses usable in the mission
     configs.finalize()
-    analyses.finalize()    
+    analyses.finalize()
 
-    # weight analysis
+    # Determine the vehicle weight breakdown (independent of mission fuel usage)
     weights = analyses.configs.base.weights
     breakdown = weights.evaluate()      
 
-    # mission analysis
+    # Perform a mission analysis
     mission = analyses.missions
     results = mission.evaluate()
 
-    # plt the old results
+    # Plot all mission results, including items such as altitude profile and L/D
     plot_mission(results)
 
     return
-
 # ----------------------------------------------------------------------
 #   Analysis Setup
 # ----------------------------------------------------------------------
@@ -195,6 +197,8 @@ def mission_setup(analyses,vehicle):
     segment.tag = "climb"
  
     segment.analyses.extend( analyses.takeoff )
+
+    segment.battery_energy  = vehicle.propulsors.battery_propeller.battery.max_energy * 0.89
  
     segment.altitude_start = 0.0   * Units.ft
     segment.altitude_end   = 9000.0   * Units.ft
@@ -213,7 +217,7 @@ def mission_setup(analyses,vehicle):
 
     segment.analyses.extend( analyses.cruise )
 
-    segment.battery_energy  = vehicle.propulsors.battery_propeller.battery.max_energy * 0.89
+    # segment.battery_energy  = vehicle.propulsors.battery_propeller.battery.max_energy * 0.89
 
     segment.altitude  = 9000. * Units.ft 
     segment.air_speed = 170 * Units['kts'] 

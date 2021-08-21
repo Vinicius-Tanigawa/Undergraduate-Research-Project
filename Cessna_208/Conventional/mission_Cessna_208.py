@@ -296,11 +296,14 @@ def mission_setup(analyses,vehicle):
     # base segment
     base_segment = Segments.Segment()
     ones_row = base_segment.state.ones_row
-    base_segment.process.iterate.unknowns.network = vehicle.propulsors.network.unpack_unknowns
-    base_segment.process.iterate.residuals.network = vehicle.propulsors.network.residuals
-    base_segment.state.unknowns.pitch_command = ones_row(1) * 0. * Units.deg
+    base_segment.process.iterate.unknowns.network = vehicle.propulsors.internal_combustion.unpack_unknowns
+    base_segment.process.iterate.residuals.network = vehicle.propulsors.internal_combustion.residuals
+    base_segment.state.unknowns.pitch_command = ones_row(1) * 0. * Units.deg  
     base_segment.state.residuals.net = 0. * ones_row(1)
-    base_segment.state.numerics.number_control_points = 3
+    base_segment.state.numerics.number_control_points = 4
+    base_segment.state.unknowns.throttle                 = 0.1   *  ones_row(1)
+    base_segment.state.unknowns.rpm                      = 1850. *  ones_row(1) 
+    base_segment.state.residuals.network                 = 0.    * ones_row(1)
 
 
 
@@ -308,18 +311,32 @@ def mission_setup(analyses,vehicle):
     #   Climb Segment: Constant Speed Constant Rate  
     # ------------------------------------------------------------------
 
-#    segment = Segments.Climb.Constant_Speed_Constant_Rate(base_segment)
-#    segment.tag = "climb"
-#
-#    segment.analyses.extend( analyses.takeoff )
-#
-#    segment.altitude_start = 0.0   * Units.ft
-#    segment.altitude_end   = 9000.0   * Units.ft
-#    segment.air_speed      = 140 * Units['kts'] 
-#    segment.climb_rate     = 800   * Units.ft / Units.min
-# 
-#    # add to misison
-#    mission.append_segment(segment)
+    segment = Segments.Climb.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "climb"
+ 
+    segment.analyses.extend( analyses.takeoff )
+ 
+    segment.altitude_start = 0.0   * Units.ft
+    segment.altitude_end   = 9000.0   * Units.ft
+    segment.air_speed      = 140 * Units['kts'] 
+    segment.climb_rate     = 800   * Units.ft / Units.min
+ 
+    # add to misison
+    mission.append_segment(segment)
+
+    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment.tag = "climb"
+
+    # # connect vehicle configuration
+    # segment.analyses.extend( analyses.takeoff )
+
+    # segment.altitude_start = 0.0   * Units.ft
+    # segment.altitude_end   = 9000.0   * Units.ft
+    # segment.air_speed      = 140.0 * Units.knots
+    # segment.throttle       = 1.0 
+ 
+    # # add to misison
+    # mission.append_segment(segment)
 
     # ------------------------------------------------------------------    
     #   Cruise Segment: Constant Speed Constant Altitude
@@ -344,19 +361,19 @@ def mission_setup(analyses,vehicle):
 #   Descent Segment: Constant Speed Constant Rate  
 # ------------------------------------------------------------------
 
-#    segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
-#    segment.tag = "descent_1"
-#
-#    segment.analyses.extend( analyses.cruise )
-#
-#    segment.altitude_start = 9000. * Units.ft 
-#    segment.altitude_end   = 0.   * Units.ft 
-#    segment.air_speed      = 170 * Units.kts
-#    segment.descent_rate   = 500.   * Units.ft / Units.min
-#
-#    # add to mission
-#    mission.append_segment(segment)
-#
+    segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "descent_1"
+ 
+    segment.analyses.extend( analyses.cruise )
+ 
+    segment.altitude_start = 9000. * Units.ft 
+    segment.altitude_end   = 0.   * Units.ft 
+    segment.air_speed      = 170 * Units.kts
+    segment.descent_rate   = 500.   * Units.ft / Units.min
+ 
+    # add to mission
+    mission.append_segment(segment)
+
     return mission
 
 def missions_setup(base_mission):
@@ -398,22 +415,6 @@ def plot_mission(results, line_style = 'bo-'):
 
     # Plot Altitude, sfc, vehicle weight 
     plot_altitude_sfc_weight(results, line_style)  
-
-    # Plot Propeller Conditions 
-#    plot_propeller_conditions(results, line_style) 
-
-#    plot_disc_power_loading(results, line_style)
-
-#    plot_surface_pressure_contours(results, vehicle)
-
-#    plot_lift_distribution(results, vehicle)
-
-#    create_video_frames(results, vehicle)
-
-#    plot_noise_level(results, line_style)
-
-#    plot_flight_profile_noise_contour(results, line_style)
-
     
     return 
 
