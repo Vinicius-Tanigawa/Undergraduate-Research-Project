@@ -95,7 +95,7 @@ def vehicle_setup():
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
 
-    wing.origin                  = [[4.938,0,0.851]]
+    wing.origin                  = [[4.022,0,0.630]]
     wing.aerodynamic_center      = [0,0,0]  
 
     wing.vertical                = False 
@@ -191,7 +191,7 @@ def vehicle_setup():
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees  
 
-    # wing.origin                  = [[33.02,0,1.466]]
+    # wing.origin                  = [[10.785,0,1.466]]
     wing.aerodynamic_center      = [0,0,0]
 
     wing.vertical                = False 
