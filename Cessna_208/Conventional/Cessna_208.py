@@ -1,10 +1,7 @@
 # Cessna_208.py
 
 
-# Created:  Feb 2017, M. Vegh 
-# Modified: Feb 2018, M. Vegh 
-# Modified: Mar 2020, M. Clarke
-# Modified: Jun 2021, V. Tanigawa
+# Created:  Jun 2021, V. Tanigawa 
 
 
 # ----------------------------------------------------------------------
@@ -35,11 +32,12 @@ def vehicle_setup():
 
     # Vehicle level Mass Properties -------------------------------------------
     vehicle.mass_properties.max_takeoff               = 3629. * Units.kilogram 
-    vehicle.mass_properties.takeoff                   = 3645. * Units.kilogram   
+    # vehicle.mass_properties.takeoff                   = 3645. * Units.kilogram  
+    vehicle.mass_properties.takeoff                   = 8600. * Units.pound # Calibration
     vehicle.mass_properties.operating_empty           = 1832. * Units.kilogram 
     vehicle.mass_properties.max_zero_fuel             = 2351.0 * Units.kilogram
     vehicle.mass_properties.cargo                     = 1400.  * Units.kilogram   
-    # vehicle.mass_properties.center_of_gravity         = [[ 15.30987849,   0.        ,  -0.48023939]]
+    vehicle.mass_properties.center_of_gravity         = [[4.4634, 0., 0.]] # (Considering CG%_c = 28%)
     # vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]]
 
     vehicle.design_mach_number                        = 0.289
@@ -82,7 +80,7 @@ def vehicle_setup():
 
     wing.aspect_ratio            = 9.71 # (wing span² / wing area)
     wing.sweeps.quarter_chord    = 2.74 * Units.deg # (cotan((root chord - tip chord) / wing span))
-    wing.thickness_to_chord      = 0.15 #(wing thickness / chord ratio)
+    wing.thickness_to_chord      = 0.195 #(wing thickness / chord ratio)
     wing.taper                   = 0.616 # (tip chord / root chord)
 
     wing.spans.projected         = 15.875 * Units.meter 
@@ -97,8 +95,8 @@ def vehicle_setup():
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
 
-    # wing.origin                  = [[13.61,0,-0.93]]
-    # wing.aerodynamic_center      = [0,0,0]  
+    wing.origin                  = [[4.938,0,0.851]]
+    wing.aerodynamic_center      = [0,0,0]  
 
     wing.vertical                = False 
     wing.symmetric               = True 
@@ -107,47 +105,49 @@ def vehicle_setup():
     wing.dynamic_pressure_ratio  = 1.0 
 
     #   Main Wing Segments -------------------------------------------
-    # root_airfoil                          = SUAVE.Components.Wings.Airfoils.Airfoil()
-    # root_airfoil.coordinate_file          = '../Vehicles/Airfoils/B737a.txt'
-    # segment                               = SUAVE.Components.Wings.Segment()
-    # segment.tag                           = 'Root'
-    # segment.percent_span_location         = 0.0
-    # segment.twist                         = 4. * Units.deg
-    # segment.root_chord_percent            = 1.
-    # segment.thickness_to_chord            = 0.1
-    # segment.dihedral_outboard             = 2.5 * Units.degrees
+    #   Airfoil Geometry File (reference): https://m-selig.ae.illinois.edu/ads/aircraft.html
+    #   Airfoil Data Acquired from: http://airfoiltools.com/airfoil/naca5digit?MNaca5DigitForm%5Bcl%5D=0.3&MNaca5DigitForm%5BposKey%5D=15_0&MNaca5DigitForm%5Bthick%5D=15.5&MNaca5DigitForm%5BnumPoints%5D=81&MNaca5DigitForm%5BcosSpace%5D=0&MNaca5DigitForm%5BcosSpace%5D=1&MNaca5DigitForm%5BcloseTe%5D=0&yt0=Plot
+    root_airfoil                          = SUAVE.Components.Wings.Airfoils.Airfoil()
+    root_airfoil.coordinate_file          = '../Airfoils/C208a.txt' #suposition
+    segment                               = SUAVE.Components.Wings.Segment()
+    segment.tag                           = 'Root'
+    segment.percent_span_location         = 0.0
+    segment.twist                         = 0. * Units.deg
+    segment.root_chord_percent            = 1.
+    segment.thickness_to_chord            = 0.195
+    segment.dihedral_outboard             = 3. * Units.degrees
     # segment.sweeps.quarter_chord          = 28.225 * Units.degrees
-    # segment.thickness_to_chord            = .1
-    # segment.append_airfoil(root_airfoil)
-    # wing.append_segment(segment)
+    segment.thickness_to_chord            = 0.195
+    segment.append_airfoil(root_airfoil)
+    wing.append_segment(segment)
 
-    # mid_airfoil                           = SUAVE.Components.Wings.Airfoils.Airfoil()
-    # mid_airfoil.coordinate_file           = '../Vehicles/Airfoils/B737c.txt'
-    # segment                               = SUAVE.Components.Wings.Segment()
-    # segment.tag                           = 'Section_2'
-    # segment.percent_span_location         = 0.963
-    # segment.twist                         = 0.00258 * Units.deg
-    # segment.root_chord_percent            = 0.220
-    # segment.thickness_to_chord            = 0.1
-    # segment.dihedral_outboard             = 5.5 * Units.degrees
+    mid_airfoil                           = SUAVE.Components.Wings.Airfoils.Airfoil()
+    mid_airfoil.coordinate_file           = '../Airfoils/C208b.txt' #suposition
+    segment                               = SUAVE.Components.Wings.Segment()
+    segment.tag                           = 'Section_2'
+    segment.percent_span_location         = 0.5
+    segment.twist                         = 0. * Units.deg
+    segment.root_chord_percent            = 0.813 #suposition
+    segment.thickness_to_chord            = 0.174
+    segment.dihedral_outboard             = 3. * Units.degrees
     # segment.sweeps.quarter_chord          = 56.75 * Units.degrees
-    # segment.thickness_to_chord            = .1
-    # segment.append_airfoil(mid_airfoil)
-    # wing.append_segment(segment)
+    segment.thickness_to_chord            = 0.174
+    segment.append_airfoil(mid_airfoil)
+    wing.append_segment(segment)
 
-    # tip_airfoil                           =  SUAVE.Components.Wings.Airfoils.Airfoil()
-    # tip_airfoil.coordinate_file           = '../Vehicles/Airfoils/B737d.txt'
-    # segment                               = SUAVE.Components.Wings.Segment()
-    # segment.tag                           = 'Tip'
-    # segment.percent_span_location         = 1.
-    # segment.twist                         = 0. * Units.degrees
-    # segment.root_chord_percent            = 0.10077
-    # segment.thickness_to_chord            = 0.1
-    # segment.dihedral_outboard             = 0.
+    tip_airfoil                           =  SUAVE.Components.Wings.Airfoils.Airfoil()
+    tip_airfoil.coordinate_file           = '../Airfoils/C208c.txt' #suposition
+    segment                               = SUAVE.Components.Wings.Segment()
+    segment.tag                           = 'Tip'
+    segment.percent_span_location         = 1.
+    segment.twist                         = 0. * Units.degrees
+    segment.root_chord_percent            = 0.626 #suposition
+    segment.thickness_to_chord            = 0.141
+    segment.dihedral_outboard             = 0.
     # segment.sweeps.quarter_chord          = 0.
-    # segment.thickness_to_chord            = .1
-    # segment.append_airfoil(tip_airfoil)
-    # wing.append_segment(segment)
+    segment.thickness_to_chord            = 0.141
+    segment.append_airfoil(tip_airfoil)
+    wing.append_segment(segment)
 
 
     #   Main Wing Control Surfaces -------------------------------------------
@@ -192,7 +192,7 @@ def vehicle_setup():
     wing.twists.tip              = 0.0 * Units.degrees  
 
     # wing.origin                  = [[33.02,0,1.466]]
-    # wing.aerodynamic_center      = [0,0,0]
+    wing.aerodynamic_center      = [0,0,0]
 
     wing.vertical                = False 
     wing.symmetric               = True
@@ -200,34 +200,34 @@ def vehicle_setup():
     wing.dynamic_pressure_ratio  = 0.9  
 
     #   Horizontal Stabilizer Segments -------------------------------------------
-    # segment                        = SUAVE.Components.Wings.Segment()
-    # segment.tag                    = 'root_segment'
-    # segment.percent_span_location  = 0.0
-    # segment.twist                  = 0. * Units.deg
-    # segment.root_chord_percent     = 1.0
-    # segment.dihedral_outboard      = 8.63 * Units.degrees
+    segment                        = SUAVE.Components.Wings.Segment()
+    segment.tag                    = 'root_segment'
+    segment.percent_span_location  = 0.0
+    segment.twist                  = 0. * Units.deg
+    segment.root_chord_percent     = 1.0
+    segment.dihedral_outboard      = 0. * Units.degrees
     # segment.sweeps.quarter_chord   = 28.2250  * Units.degrees 
-    # segment.thickness_to_chord     = .1
-    # wing.append_segment(segment)
+    segment.thickness_to_chord     = 0.176
+    wing.append_segment(segment)
 
-    # segment                        = SUAVE.Components.Wings.Segment()
-    # segment.tag                    = 'tip_segment'
-    # segment.percent_span_location  = 1.
-    # segment.twist                  = 0. * Units.deg
-    # segment.root_chord_percent     = 0.3333               
-    # segment.dihedral_outboard      = 0 * Units.degrees
+    segment                        = SUAVE.Components.Wings.Segment()
+    segment.tag                    = 'tip_segment'
+    segment.percent_span_location  = 1.
+    segment.twist                  = 0. * Units.deg
+    segment.root_chord_percent     = 0.623 #suposition               
+    segment.dihedral_outboard      = 0 * Units.degrees
     # segment.sweeps.quarter_chord   = 0 * Units.degrees  
-    # segment.thickness_to_chord     = .1
-    # wing.append_segment(segment)
+    segment.thickness_to_chord     = 0.282
+    wing.append_segment(segment)
 
     #   Control Surfaces -------------------------------------------
-    # elevator                       = SUAVE.Components.Wings.Control_Surfaces.Elevator()
-    # elevator.tag                   = 'elevator'
+    elevator                       = SUAVE.Components.Wings.Control_Surfaces.Elevator()
+    elevator.tag                   = 'elevator'
     # elevator.span_fraction_start   = 0.09
     # elevator.span_fraction_end     = 0.92
-    # elevator.deflection            = 0.0  * Units.deg
+    elevator.deflection            = 0.0  * Units.deg
     # elevator.chord_fraction        = 0.3
-    # wing.append_control_surface(elevator)
+    wing.append_control_surface(elevator)
 
     #   add to vehicle
     vehicle.append_component(wing)
@@ -260,7 +260,7 @@ def vehicle_setup():
     wing.twists.tip              = 0.0 * Units.degrees
     
     # wing.origin                  = [[26.944,0,1.54]]
-    # wing.aerodynamic_center      = [0,0,0]
+    wing.aerodynamic_center      = [0,0,0]
       
     wing.vertical                = True 
     wing.symmetric               = False
@@ -522,7 +522,7 @@ def vehicle_setup():
     prop.hub_radius              = 0.15     * Units.inches
     prop.design_Cl               = 0.4
     prop.design_altitude         = 20000. * Units.feet
-    prop.design_power            = .64 * 675. * Units.horsepower
+    prop.design_power            = 675. * Units.horsepower
 
     prop.airfoil_geometry        =  ['../Airfoils/NACA_4412.txt'] 
     prop.airfoil_polars          = [['../Airfoils/Polars/NACA_4412_polar_Re_50000.txt' ,
