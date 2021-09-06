@@ -31,12 +31,11 @@ def vehicle_setup():
     # ------------------------------------------------------------------    
 
     # Vehicle level Mass Properties -------------------------------------------
-    vehicle.mass_properties.max_takeoff               = 3629. * Units.kilogram 
-    # vehicle.mass_properties.takeoff                   = 3645. * Units.kilogram  
-    vehicle.mass_properties.takeoff                   = 8600. * Units.pound # Calibration
-    vehicle.mass_properties.operating_empty           = 1832. * Units.kilogram 
-    vehicle.mass_properties.max_zero_fuel             = 2351.0 * Units.kilogram
-    vehicle.mass_properties.cargo                     = 1400.  * Units.kilogram   
+    vehicle.mass_properties.max_takeoff               = 8785. * Units.pound
+    vehicle.mass_properties.takeoff                   = 8750. * Units.pound
+    vehicle.mass_properties.operating_empty           = 4680. * Units.pound 
+    vehicle.mass_properties.max_zero_fuel             = 4680. * Units.pound
+    vehicle.mass_properties.cargo                     = 4105.  * Units.pound  
     vehicle.mass_properties.center_of_gravity         = [[4.4634, 0., 0.]] # (Considering CG%_c = 28%)
     # vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]]
 
@@ -78,19 +77,19 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Main_Wing()
     wing.tag = 'main_wing'
 
-    wing.aspect_ratio            = 9.71 # (wing span² / wing area)
-    wing.sweeps.quarter_chord    = 2.74 * Units.deg # (cotan((root chord - tip chord) / wing span))
-    wing.thickness_to_chord      = 0.195 #(wing thickness / chord ratio)
-    wing.taper                   = 0.616 # (tip chord / root chord)
+    wing.aspect_ratio            = 9.71
+    wing.sweeps.quarter_chord    = 2.93 * Units.deg
+    wing.thickness_to_chord      = 0.195
+    wing.taper                   = 0.586
 
     wing.spans.projected         = 15.875 * Units.meter 
 
-    wing.chords.root             = 1.98 * Units.meter 
-    wing.chords.tip              = 1.22 * Units.meter 
-    wing.chords.mean_aerodynamic = 1.63 * Units.meter # (root chord * 2/3 * ((1 + taper ratio + (taper ratio)²) / (1 + taper ratio))
+    wing.chords.root             = 2.062 * Units.meter
+    wing.chords.tip              = 1.208 * Units.meter 
+    wing.chords.mean_aerodynamic = 1.635 * Units.meter
 
-    wing.areas.reference         = 25.96 * Units['meters**2'] # (((root chord + tip chord) * wing span) / 2)
-    wing.areas.wetted            = 51.82 * Units['meters**2'] # (2 * area reference)
+    wing.areas.reference         = 25.96 * Units['meters**2']
+    wing.areas.wetted            = 51.82 * Units['meters**2']
 
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
@@ -102,7 +101,11 @@ def vehicle_setup():
     wing.symmetric               = True 
     wing.high_lift               = True
 
+    wing.number_of_motors        = 0.
+
     wing.dynamic_pressure_ratio  = 1.0 
+
+    wing.unblown_maximum_lift_coefficient = 1.521365534 
 
     #   Main Wing Segments -------------------------------------------
     #   Airfoil Geometry File (reference): https://m-selig.ae.illinois.edu/ads/aircraft.html
@@ -174,20 +177,20 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Horizontal_Tail()
     wing.tag = 'horizontal_stabilizer'
     
-    wing.aspect_ratio            = 2.953 # (wing span² / wing area)
-    wing.sweeps.quarter_chord    = 4.575 * Units.deg # (cotan((root chord - tip chord) / wing span))
-    wing.thickness_to_chord      = 0.12 #(wing thickness / chord ratio)
-    wing.taper                   = 0.618 # (tip chord / root chord)
+    wing.aspect_ratio            = 2.953
+    wing.sweeps.quarter_chord    = 2.05 * Units.deg
+    wing.thickness_to_chord      = 0.12
+    wing.taper                   = 0.618
 
     wing.spans.projected         = 6.248 * Units.meter
 
     wing.chords.root             = 1.31  * Units.meter
     wing.chords.tip              = 0.81 * Units.meter
-    wing.chords.mean_aerodynamic = 1.079  * Units.meter # (root chord * 2/3 * ((1 + taper ratio + (taper ratio)²) / (1 + taper ratio))
+    wing.chords.mean_aerodynamic = 1.06  * Units.meter
 
     wing.areas.reference         = 13.22   * Units['meters**2']
     wing.areas.wetted            = 26.44 * Units['meters**2']
-    wing.areas.exposed           = 11.152 * Units['meters**2']
+    # wing.areas.exposed           = 11.152 * Units['meters**2']
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees  
 
@@ -241,17 +244,17 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Vertical_Tail()
     wing.tag = 'vertical_stabilizer'    
 
-    wing.aspect_ratio            = 1.21 # (wing span² / wing area)
-    wing.sweeps.quarter_chord    = 24.189 * Units.deg # (cotan((root chord - tip chord) / wing span))
-    wing.thickness_to_chord      = 0.12 #(wing thickness / chord ratio)
-    wing.taper                   = 0.38 # (tip chord / root chord)
+    wing.aspect_ratio            = 2.0
+    wing.sweeps.quarter_chord    = 14.06 * Units.deg
+    wing.thickness_to_chord      = 0.12
+    wing.taper                   = 0.38
 
     wing.spans.projected         = 3.05 * Units.meter
     wing.total_length            = wing.spans.projected 
 
     wing.chords.root             = 2.21  * Units.meter
     wing.chords.tip              = 0.84  * Units.meter
-    wing.chords.mean_aerodynamic = 1.627   * Units.meter # (root chord * 2/3 * ((1 + taper ratio + (taper ratio)²) / (1 + taper ratio))
+    wing.chords.mean_aerodynamic = 1.525   * Units.meter
     
     wing.areas.reference         = 4.21 * Units['meters**2']
     wing.areas.wetted            = 8.42 * Units['meters**2']
@@ -314,30 +317,33 @@ def vehicle_setup():
     fuselage.number_coach_seats    = vehicle.passengers
     fuselage.seats_abreast         = 2
     fuselage.seat_pitch            = 1     * Units.meter
-    fuselage.fineness.nose         = 1.500 # Without cabin
-    # fuselage.fineness.nose         = 2.133 # With cabin
+    fuselage.fineness.nose         = 2.133
     fuselage.fineness.tail         = 3.104
 
-    fuselage.lengths.nose          = 2.285   * Units.meter # Without cabin
-    # fuselage.lengths.nose          = 3.251   * Units.meter # With cabin
+    fuselage.lengths.nose          = 3.251   * Units.meter
     fuselage.lengths.tail          = 4.529   * Units.meter
     # fuselage.lengths.cabin         = 28.85
     fuselage.lengths.total         = 16.67 * Units.meter
     fuselage.lengths.fore_space    = 0.    * Units.meter
     fuselage.lengths.aft_space     = 0.    * Units.meter
 
-    fuselage.width                 = 1.878  * Units.meter
+    fuselage.width                 = 1.71  * Units.meter
 
-    fuselage.heights.maximum       = 1.684  * Units.meter
+    fuselage.heights.maximum       = 2.78  * Units.meter
     fuselage.heights.at_quarter_length          = 1.684 * Units.meter
     fuselage.heights.at_three_quarters_length   = 1.643 * Units.meter
     fuselage.heights.at_wing_root_quarter_chord = 1.684 * Units.meter
 
     fuselage.areas.side_projected  = 21.353 * Units['meters**2']
     fuselage.areas.wetted          = 75.58  * Units['meters**2']
-    fuselage.areas.front_projected = 3.163    * Units['meters**2']
+    fuselage.areas.front_projected = 4.7538    * Units['meters**2']
 
-    fuselage.effective_diameter    = 1.781     * Units.meter
+    fuselage.strut = Data()
+    fuselage.strut.thickness_to_chord = 0.12
+    fuselage.strut.chord    = 0.3
+    fuselage.strut.length   = 2.9 
+
+    fuselage.effective_diameter    = 2.46     * Units.meter
 
     fuselage.differential_pressure = 0. * Units.pascal
 
@@ -504,25 +510,28 @@ def vehicle_setup():
     net.engine_length                           = 0.01 * Units.meters
     net.areas                                   = Data()
     net.areas.wetted                            = 0.01
+    net.thrust_angle                            = 0.
                                                 
     # the engine                    
     net.engine                                  = SUAVE.Components.Energy.Converters.Internal_Combustion_Engine()
     net.engine.sea_level_power                  = 675. * Units.horsepower
     net.engine.flat_rate_altitude               = 0.0
     net.engine.rated_speed                      = 1900. * Units.rpm
-    net.engine.power_specific_fuel_consumption  = 0.64
+    net.engine.power_specific_fuel_consumption  = 0.64 * 1.02
+    net.engine.rated_sfc       = 0.64 * Units['lb/hp/h'] * 1.02
+    net.engine.torque_limit    = 1970 * Units['lbf*ft']
     
     
     # the prop
     prop = SUAVE.Components.Energy.Converters.Propeller()
-    prop.number_of_blades        = 2.0
-    prop.freestream_velocity     = 200.   * Units.knots
-    prop.angular_velocity        = 1850.  * Units.rpm
+    prop.number_of_blades        = 3.0
+    prop.freestream_velocity     = 90.   * Units.knots
+    prop.angular_velocity        = 1900.  * Units.rpm
     prop.tip_radius              = 53. * Units.inches
     prop.hub_radius              = 0.15     * Units.inches
     prop.design_Cl               = 0.4
-    prop.design_altitude         = 20000. * Units.feet
-    prop.design_power            = 675. * Units.horsepower
+    prop.design_altitude         = 5000. * Units.ft
+    prop.design_power            = 600. * Units.horsepower
 
     prop.airfoil_geometry        =  ['../Airfoils/NACA_4412.txt'] 
     prop.airfoil_polars          = [['../Airfoils/Polars/NACA_4412_polar_Re_50000.txt' ,

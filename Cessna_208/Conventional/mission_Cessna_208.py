@@ -121,17 +121,8 @@ def base_analysis(vehicle):
     #  Aerodynamics Analysis
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
     aerodynamics.geometry = vehicle
-    aerodynamics.settings.drag_coefficient_increment = 0.0004
+    aerodynamics.settings.drag_coefficient_increment = 0.0150
     aerodynamics.settings.oswald_efficiency_factor   = 0.7860  ## Oswald for the case considering thrust effect on fuselage drag
-#    aerodynamics.settings.oswald_efficiency_factor   = None
-    # aerodynamics.settings.interference.wing          = 1.05 #1.15
-    # aerodynamics.settings.interference.strut         = 1.10 #1.1
-    # aerodynamics.settings.interference.landing_gear  = 1.0 #1.35
-    
-    # aerodynamics.settings.miscellaneous.fuselage        = 1.0 #1.67
-    # aerodynamics.settings.miscellaneous.wing            = 1.0 #1.15
-    # aerodynamics.settings.miscellaneous.landing_gear    = 1.0 #1.35
-    # aerodynamics.settings.miscellaneous.excrescences    = 2.95 #1.0
     analyses.append(aerodynamics)
 
     # ------------------------------------------------------------------
@@ -306,9 +297,8 @@ def mission_setup(analyses,vehicle):
     base_segment.state.residuals.net = 0. * ones_row(1)
     base_segment.state.numerics.number_control_points = 4
     base_segment.state.unknowns.throttle                 = 0.1   *  ones_row(1)
-    base_segment.state.unknowns.rpm                      = 1850. *  ones_row(1) 
+    base_segment.state.unknowns.rpm                      = 1900. *  ones_row(1) 
     base_segment.state.residuals.network                 = 0.    * ones_row(1)
-
 
 
     # # ------------------------------------------------------------------
@@ -394,15 +384,14 @@ def mission_setup(analyses,vehicle):
 
     # Calibration --------------------------------------
 
-    segment = segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
-    segment.tag = "descent"
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "cruise"
 
     segment.analyses.extend( analyses.cruise )
 
-    segment.altitude_start = 12000 * Units.ft
-    segment.altitude_end = 0. * Units.ft
-    segment.air_speed = 150. * Units['kts'] 
-    segment.descent_rate   = 800.   * Units.ft / Units.min
+    segment.altitude  = 4000 * Units.ft
+    segment.air_speed = 165 * Units['kts'] 
+    segment.distance  = 200 * Units.nmi
     
     segment.state.numerics.number_control_points = 10
 
@@ -537,6 +526,20 @@ def plot_mission(results, line_style = 'bo-'):
 
     # Plot Altitude, sfc, vehicle weight 
     plot_altitude_sfc_weight(results, line_style)  
+
+    plot_disc_power_loading(results, line_style) 
+
+    # plot_propeller_conditions(results, line_style)
+
+    # plot_surface_pressure_contours(results, line_style)
+
+    # plot_lift_distribution(results, line_style)
+
+    # create_video_frames(results, line_style)
+
+    # plot_noise_level(results, line_style)
+
+    # plot_flight_profile_noise_contour(results, line_style)
     
     return 
 
