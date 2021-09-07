@@ -121,7 +121,7 @@ def base_analysis(vehicle):
     #  Aerodynamics Analysis
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
     aerodynamics.geometry = vehicle
-    aerodynamics.settings.drag_coefficient_increment = 0.0150
+    aerodynamics.settings.drag_coefficient_increment = 0.0128
     aerodynamics.settings.oswald_efficiency_factor   = 0.7860  ## Oswald for the case considering thrust effect on fuselage drag
     analyses.append(aerodynamics)
 
@@ -364,9 +364,9 @@ def mission_setup(analyses,vehicle):
     # mission.append_segment(segment)
 
 
-    # ------------------------------------------------------------------    
-    #   Cruise Segment: Constant Speed Constant Altitude
-    # ------------------------------------------------------------------    
+    # # ------------------------------------------------------------------    
+    # #  Cruise Segment: Constant Speed Constant Altitude
+    # # ------------------------------------------------------------------    
 
     # segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
     # segment.tag = "cruise"
@@ -389,8 +389,8 @@ def mission_setup(analyses,vehicle):
 
     segment.analyses.extend( analyses.cruise )
 
-    segment.altitude  = 4000 * Units.ft
-    segment.air_speed = 165 * Units['kts'] 
+    segment.altitude  = 20000 * Units.ft
+    segment.air_speed = 163 * Units['kts'] 
     segment.distance  = 200 * Units.nmi
     
     segment.state.numerics.number_control_points = 10
@@ -506,28 +506,28 @@ def missions_setup(base_mission):
 # ----------------------------------------------------------------------
 def plot_mission(results, line_style = 'bo-'):
 
-    # Plot Flight Conditions 
-    plot_flight_conditions(results, line_style) 
+    # # Plot Flight Conditions 
+    # plot_flight_conditions(results, line_style) 
 
-    # Plot Aerodynamic Coefficients
-    plot_aerodynamic_coefficients(results, line_style) 
+    # # Plot Aerodynamic Coefficients
+    # plot_aerodynamic_coefficients(results, line_style) 
 
-    # Plot Aerodynamic Forces 
-    plot_aerodynamic_forces(results, line_style)
+    # # Plot Aerodynamic Forces 
+    # plot_aerodynamic_forces(results, line_style)
 
-    # Plot Static Stability Coefficients 
-    plot_stability_coefficients(results, line_style)  
+    # # Plot Static Stability Coefficients 
+    # plot_stability_coefficients(results, line_style)  
 
-    # Drag Components
-    plot_drag_components(results, line_style)
+    # # Drag Components
+    # plot_drag_components(results, line_style)
 
-    # Plot Aircraft Flight Speed
-    plot_aircraft_velocities(results, line_style)
+    # # Plot Aircraft Flight Speed
+    # plot_aircraft_velocities(results, line_style)
 
     # Plot Altitude, sfc, vehicle weight 
     plot_altitude_sfc_weight(results, line_style)  
 
-    plot_disc_power_loading(results, line_style) 
+    # plot_disc_power_loading(results, line_style) 
 
     # plot_propeller_conditions(results, line_style)
 
