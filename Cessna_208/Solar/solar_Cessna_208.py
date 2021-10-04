@@ -1,10 +1,7 @@
-# Cessna_208.py
+# solar_Cessna_208.py
 
 
-# Created:  Feb 2017, M. Vegh 
-# Modified: Feb 2018, M. Vegh 
-# Modified: Mar 2020, M. Clarke
-# Modified: Jun 2021, V. Tanigawa
+# Created:  Sep 2021, V. Tanigawa 
 
 
 # ----------------------------------------------------------------------
@@ -13,25 +10,23 @@
 
 import numpy as np
 import SUAVE
-
 from SUAVE.Core import Units
-from SUAVE.Core import Data, Container
-from SUAVE.Components.Energy.Networks.Battery_Propeller import Battery_Propeller
-from SUAVE.Methods.Propulsion import propeller_design 
-from SUAVE.Methods.Power.Battery.Sizing import initialize_from_energy_and_power, initialize_from_mass
-from SUAVE.Methods.Propulsion.electric_motor_sizing import size_from_kv    
-from SUAVE.Plots.Geometry_Plots.plot_vehicle import plot_vehicle
-from SUAVE.Methods.Propulsion.electric_motor_sizing                       import size_from_mass , size_optimal_motor
+from SUAVE.Core import (
+    Data, Container,
+)
 from SUAVE.Methods.Geometry.Three_Dimensional.compute_span_location_from_chord_length import compute_span_location_from_chord_length
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.datcom import datcom
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.Supporting_Functions.trapezoid_ac_x import trapezoid_ac_x
+from SUAVE.Components.Energy.Networks.Solar import Solar
+from SUAVE.Methods.Propulsion import propeller_design
+from SUAVE.Methods.Power.Battery.Sizing import initialize_from_energy_and_power, initialize_from_mass
 
 def vehicle_setup(): 
     # ------------------------------------------------------------------
     #   Initialize the Vehicle
     # ------------------------------------------------------------------        
     vehicle                                     = SUAVE.Vehicle()
-    vehicle.tag                                 = 'electric_Cessna_208'
+    vehicle.tag                                 = 'solar_Cessna_208'
                                                 
     # ------------------------------------------------------------------
     #   Vehicle-level Properties
@@ -39,8 +34,9 @@ def vehicle_setup():
 
     # Vehicle level Mass Properties -------------------------------------------
     vehicle.mass_properties.max_takeoff               = 8785. * Units.pound
-    vehicle.mass_properties.takeoff                   = 4000. * Units.pound
+    vehicle.mass_properties.takeoff                   = 8750. * Units.pound
     vehicle.mass_properties.operating_empty           = 4680. * Units.pound 
+    vehicle.mass_properties.max_zero_fuel             = 4680. * Units.pound
     vehicle.mass_properties.cargo                     = 4105.  * Units.pound  
     vehicle.mass_properties.center_of_gravity         = [[4.4634, 0., 0.]] # (Considering CG%_c = 28%)
     # vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]]
@@ -492,90 +488,100 @@ def vehicle_setup():
     vehicle.append_component(fuselage)
 
 
-    #---------------------------------------------------------------------------------------------
-    # DEFINE PROPELLER
-    #---------------------------------------------------------------------------------------------
-    # build network    
-    net = Battery_Propeller() 
-    net.number_of_engines       = 1.
-    net.nacelle_diameter                        = 0.2 * Units.meters
-    net.engine_length                           = 0.01 * Units.meters
-    net.areas                   = Data()
-    net.areas.wetted                            = 0.01 
-
-
-    # Component 1 the ESC
-    esc = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
+    # ------------------------------------------------------------------
+    #   Propulsor
+    # ------------------------------------------------------------------ 
+       
+    # build network
+    net                   = Solar()
+    net.number_of_engines = 1.
+    net.nacelle_diameter  = 0.2 * Units.meters
+    net.engine_length     = 0.01 * Units.meters
+    net.areas             = Data()
+    net.areas.wetted      = 0.01
+    
+    # Component 1 the Sun?
+    sun            = SUAVE.Components.Energy.Processes.Solar_Radiation()
+    net.solar_flux = sun
+    
+    # Component 2 the solar panels
+    panel                      = SUAVE.Components.Energy.Converters.Solar_Panel()
+    panel.area                 = vehicle.reference_area * 0.9
+    panel.efficiency           = 0.25
+    panel.mass_properties.mass = panel.area*(0.60 * Units.kg)
+    net.solar_panel            = panel
+    
+    # Component 3 the ESC
+    esc            = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
     esc.efficiency = 0.95 # Gundlach for brushless motors
     net.esc        = esc
-
-    # Component 2 the Propeller
+    
+    # Component 5 the Propeller
     # Design the Propeller
-    prop = SUAVE.Components.Energy.Converters.Propeller() 
-
-    prop.number_of_blades       = 3.0
-    prop.freestream_velocity    = 90.   * Units.knots   
-    prop.angular_velocity       = 1900.  * Units.rpm  
+    prop                         = SUAVE.Components.Energy.Converters.Propeller()
+    prop.number_of_blades        = 4.0
+    prop.freestream_velocity     = 1000.0 * Units.knots
+    prop.angular_velocity        = 1900. * Units['rpm']
     prop.tip_radius              = 53. * Units.inches
-    prop.hub_radius              = 0.15     * Units.inches
-    prop.design_Cl              = 0.4
-    prop.design_altitude        = 5000. * Units.feet
-    prop.design_thrust          = None  
-    prop.design_power           = 600. * Units.horsepower
+    prop.hub_radius              = 0.15 * Units.inches
+    prop.design_Cl               = 0.4
+    prop.design_altitude         = 7000.0 * Units.ft
+    prop.design_power            = 750. * Units.horsepower 
 
-    prop.airfoil_geometry       =  ['../Airfoils/NACA_4412.txt'] 
-    prop.airfoil_polars         = [['../Airfoils/Polars/NACA_4412_polar_Re_50000.txt' ,
-                                    '../Airfoils/Polars/NACA_4412_polar_Re_100000.txt' ,
-                                    '../Airfoils/Polars/NACA_4412_polar_Re_200000.txt' ,
-                                    '../Airfoils/Polars/NACA_4412_polar_Re_500000.txt' ,
-                                    '../Airfoils/Polars/NACA_4412_polar_Re_1000000.txt' ]]
+    prop.airfoil_geometry        =  ['../Airfoils/NACA_4412.txt'] 
+    prop.airfoil_polars          = [['../Airfoils/Polars/NACA_4412_polar_Re_50000.txt' ,
+                                     '../Airfoils/Polars/NACA_4412_polar_Re_100000.txt' ,
+                                     '../Airfoils/Polars/NACA_4412_polar_Re_200000.txt' ,
+                                     '../Airfoils/Polars/NACA_4412_polar_Re_500000.txt' ,
+                                     '../Airfoils/Polars/NACA_4412_polar_Re_1000000.txt' ]]
 
-    prop.airfoil_polar_stations = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]       
-    prop                        = propeller_design(prop)    
-    net.propeller               = prop    
-    
-    # Component 8 the Battery
-    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion()
-    bat.mass_properties.mass = 800. * Units.kg  
-    bat.specific_energy      = 200. * Units.Wh/Units.kg
-    bat.resistance           = 0.006
-    bat.max_voltage          = 800.
-    
-    initialize_from_mass(bat,bat.mass_properties.mass)
-    net.battery              = bat 
-    net.voltage              = bat.max_voltage
-    
-    # Component 9 Miscellaneous Systems 
-    sys = SUAVE.Components.Systems.System()
-    sys.mass_properties.mass = 5 # kg
-    
-    #------------------------------------------------------------------
-    # Design Motors
-    #------------------------------------------------------------------
+    prop.airfoil_polar_stations  = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+    prop                         = propeller_design(prop) 
+    net.propeller                = prop
+
+    # Component 4 the Motor
     motor                      = SUAVE.Components.Energy.Converters.Motor()
-    motor.mass_properties.mass = 200. * Units.kg 
-    motor.efficiency           = 0.935
-    motor.gear_ratio           = 1. 
-    motor.gearbox_efficiency   = 1. # Gear box efficiency     
-    motor.no_load_current      = 50.0 
+    motor.resistance           = 0.008
+    motor.no_load_current      = 200.  * Units.ampere
+    motor.speed_constant       = 2.5 * Units['rpm'] # RPM/volt converted to (rad/s)/volt    
     motor.propeller_radius     = prop.tip_radius
-    motor.nominal_voltage      = 700
-    motor                      = size_optimal_motor(motor,prop)
-    net.motor                  = motor  
-
+    motor.propeller_Cp         = prop.design_power_coefficient
+    motor.gear_ratio           = 1.
+    motor.gearbox_efficiency   = 1.
+    motor.expected_current     = 1000.
+    motor.mass_properties.mass = 200.0  * Units.kg
+    net.motor                  = motor    
+    
     # Component 6 the Payload
-    payload = SUAVE.Components.Energy.Peripherals.Payload()
-    payload.power_draw           = 10. #Watts 
-    payload.mass_properties.mass = 1.0 * Units.kg
+    payload                      = SUAVE.Components.Energy.Peripherals.Payload()
+    payload.power_draw           = 50. * Units.watts 
+    payload.mass_properties.mass = 5.0 * Units.kg
     net.payload                  = payload
-
+    
     # Component 7 the Avionics
-    avionics = SUAVE.Components.Energy.Peripherals.Avionics()
-    avionics.power_draw = 20. #Watts  
+    avionics            = SUAVE.Components.Energy.Peripherals.Avionics()
+    avionics.power_draw = 50. * Units.watts
     net.avionics        = avionics      
 
-    vehicle.append_component(net)  
-           
+    # Component 8 the Battery
+    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion()
+    bat.mass_properties.mass = 500.0 * Units.kg
+    bat.specific_energy      = 200. * Units.Wh/Units.kg
+    bat.resistance           = 0.05
+    bat.max_voltage          = 800.0
+    initialize_from_mass(bat,bat.mass_properties.mass)
+    net.battery              = bat
+   
+    #Component 9 the system logic controller and MPPT
+    logic                 = SUAVE.Components.Energy.Distributors.Solar_Logic()
+    logic.system_voltage  = 40.0
+    logic.MPPT_efficiency = 0.95
+    net.solar_logic       = logic
+    
+    # add the solar network to the vehicle
+    vehicle.append_component(net)      
+
 
     # ------------------------------------------------------------------
     #   Vehicle Definition Complete
