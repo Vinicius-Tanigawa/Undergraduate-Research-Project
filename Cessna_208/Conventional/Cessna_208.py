@@ -113,7 +113,7 @@ def vehicle_setup():
     #   Main Wing Segments -------------------------------------------
     #   Airfoil Geometry File (reference): https://m-selig.ae.illinois.edu/ads/aircraft.html
     #   Airfoil Data Acquired from: http://airfoiltools.com/airfoil/naca5digit?MNaca5DigitForm%5Bcl%5D=0.3&MNaca5DigitForm%5BposKey%5D=15_0&MNaca5DigitForm%5Bthick%5D=15.5&MNaca5DigitForm%5BnumPoints%5D=81&MNaca5DigitForm%5BcosSpace%5D=0&MNaca5DigitForm%5BcosSpace%5D=1&MNaca5DigitForm%5BcloseTe%5D=0&yt0=Plot
-    root_airfoil                          = SUAVE.Components.Wings.Airfoils.Airfoil()
+    root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
     root_airfoil.coordinate_file          = '../Airfoils/C208a.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Root'
@@ -127,7 +127,7 @@ def vehicle_setup():
     segment.append_airfoil(root_airfoil)
     wing.append_segment(segment)
 
-    mid_airfoil                           = SUAVE.Components.Wings.Airfoils.Airfoil()
+    mid_airfoil                           = SUAVE.Components.Airfoils.Airfoil()
     mid_airfoil.coordinate_file           = '../Airfoils/C208b.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Section_2'
@@ -141,7 +141,7 @@ def vehicle_setup():
     segment.append_airfoil(mid_airfoil)
     wing.append_segment(segment)
 
-    tip_airfoil                           =  SUAVE.Components.Wings.Airfoils.Airfoil()
+    tip_airfoil                           =  SUAVE.Components.Airfoils.Airfoil()
     tip_airfoil.coordinate_file           = '../Airfoils/C208c.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Tip'

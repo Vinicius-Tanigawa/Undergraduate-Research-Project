@@ -18,13 +18,12 @@ from SUAVE.Core import Units
 from SUAVE.Core import Data, Container
 from SUAVE.Components.Energy.Networks.Battery_Propeller import Battery_Propeller
 from SUAVE.Methods.Propulsion import propeller_design 
-from SUAVE.Methods.Power.Battery.Sizing import initialize_from_energy_and_power, initialize_from_mass
-from SUAVE.Methods.Propulsion.electric_motor_sizing import size_from_kv    
-from SUAVE.Plots.Geometry_Plots.plot_vehicle import plot_vehicle
-from SUAVE.Methods.Propulsion.electric_motor_sizing                       import size_from_mass , size_optimal_motor
+from SUAVE.Methods.Power.Battery.Sizing import initialize_from_mass   
+from SUAVE.Methods.Propulsion.electric_motor_sizing import size_optimal_motor
 from SUAVE.Methods.Geometry.Three_Dimensional.compute_span_location_from_chord_length import compute_span_location_from_chord_length
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.datcom import datcom
 from SUAVE.Methods.Flight_Dynamics.Static_Stability.Approximations.Supporting_Functions.trapezoid_ac_x import trapezoid_ac_x
+from copy import deepcopy
 
 def vehicle_setup(): 
     # ------------------------------------------------------------------
@@ -44,7 +43,7 @@ def vehicle_setup():
     vehicle.mass_properties.cargo                     = 4105.  * Units.pound  
     vehicle.mass_properties.center_of_gravity         = [[4.4634, 0., 0.]] # (Considering CG%_c = 28%)
     # vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]]
-
+    
     vehicle.design_mach_number                        = 0.289
     vehicle.design_range                              = 1070 * Units.nmi
     vehicle.design_cruise_alt                         = 25000.0 * Units.ft
@@ -116,7 +115,7 @@ def vehicle_setup():
     #   Main Wing Segments -------------------------------------------
     #   Airfoil Geometry File (reference): https://m-selig.ae.illinois.edu/ads/aircraft.html
     #   Airfoil Data Acquired from: http://airfoiltools.com/airfoil/naca5digit?MNaca5DigitForm%5Bcl%5D=0.3&MNaca5DigitForm%5BposKey%5D=15_0&MNaca5DigitForm%5Bthick%5D=15.5&MNaca5DigitForm%5BnumPoints%5D=81&MNaca5DigitForm%5BcosSpace%5D=0&MNaca5DigitForm%5BcosSpace%5D=1&MNaca5DigitForm%5BcloseTe%5D=0&yt0=Plot
-    root_airfoil                          = SUAVE.Components.Wings.Airfoils.Airfoil()
+    root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
     root_airfoil.coordinate_file          = '../Airfoils/C208a.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Root'
@@ -130,7 +129,7 @@ def vehicle_setup():
     segment.append_airfoil(root_airfoil)
     wing.append_segment(segment)
 
-    mid_airfoil                           = SUAVE.Components.Wings.Airfoils.Airfoil()
+    mid_airfoil                           = SUAVE.Components.Airfoils.Airfoil()
     mid_airfoil.coordinate_file           = '../Airfoils/C208b.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Section_2'
@@ -144,7 +143,7 @@ def vehicle_setup():
     segment.append_airfoil(mid_airfoil)
     wing.append_segment(segment)
 
-    tip_airfoil                           =  SUAVE.Components.Wings.Airfoils.Airfoil()
+    tip_airfoil                           =  SUAVE.Components.Airfoils.Airfoil()
     tip_airfoil.coordinate_file           = '../Airfoils/C208c.txt' #suposition
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Tip'
@@ -495,86 +494,79 @@ def vehicle_setup():
     #---------------------------------------------------------------------------------------------
     # DEFINE PROPELLER
     #---------------------------------------------------------------------------------------------
-    # build network    
-    net = Battery_Propeller() 
-    net.number_of_engines       = 1.
-    net.nacelle_diameter                        = 0.2 * Units.meters
-    net.engine_length                           = 0.01 * Units.meters
-    net.areas                   = Data()
-    net.areas.wetted                            = 0.01 
-
+    # build network
+    net = Battery_Propeller()
+    net.number_of_propeller_engines  = 1. 
+    net.identical_propellers         = True 
 
     # Component 1 the ESC
     esc = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
     esc.efficiency = 0.95 # Gundlach for brushless motors
     net.esc        = esc
 
-    # Component 2 the Propeller
-    # Design the Propeller
-    prop = SUAVE.Components.Energy.Converters.Propeller() 
-
+    # Component 2 the Propeller 
+    prop = SUAVE.Components.Energy.Converters.Propeller()
+    prop.tag = 'propeller_1'
     prop.number_of_blades       = 3.0
-    prop.freestream_velocity    = 90.   * Units.knots   
-    prop.angular_velocity       = 1900.  * Units.rpm  
-    prop.tip_radius              = 53. * Units.inches
-    prop.hub_radius              = 0.15     * Units.inches
+    prop.freestream_velocity    = 90.*Units.knots
+    prop.angular_velocity       = 1900.  * Units.rpm
+    prop.tip_radius             = 53. * Units.inches
+    prop.hub_radius             = 0.15     * Units.inches
     prop.design_Cl              = 0.4
     prop.design_altitude        = 5000. * Units.feet
-    prop.design_thrust          = None  
+    prop.design_thrust          = None
     prop.design_power           = 600. * Units.horsepower
-
-    prop.airfoil_geometry       =  ['../Airfoils/NACA_4412.txt'] 
+    # prop.origin                 = [[2.,2.5,0.784]]
+    prop.variable_pitch         = True 
+    prop.airfoil_geometry       =  ['../Airfoils/NACA_4412.txt']
     prop.airfoil_polars         = [['../Airfoils/Polars/NACA_4412_polar_Re_50000.txt' ,
                                     '../Airfoils/Polars/NACA_4412_polar_Re_100000.txt' ,
                                     '../Airfoils/Polars/NACA_4412_polar_Re_200000.txt' ,
                                     '../Airfoils/Polars/NACA_4412_polar_Re_500000.txt' ,
                                     '../Airfoils/Polars/NACA_4412_polar_Re_1000000.txt' ]]
 
-    prop.airfoil_polar_stations = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]       
-    prop                        = propeller_design(prop)    
-    net.propeller               = prop    
+    prop.airfoil_polar_stations = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    prop                        = propeller_design(prop)
     
-    # Component 8 the Battery
-    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion()
-    bat.mass_properties.mass = 800. * Units.kg  
-    bat.specific_energy      = 200. * Units.Wh/Units.kg
-    bat.resistance           = 0.006
-    bat.max_voltage          = 800.
-    
-    initialize_from_mass(bat,bat.mass_properties.mass)
-    net.battery              = bat 
+    net.propellers.append(prop)
+
+
+    # Component 3 the Battery
+    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion_LiNiMnCoO2_18650()
+    bat.mass_properties.mass = 500. * Units.kg  
+    bat.max_voltage          = 800. 
+    initialize_from_mass(bat)
+    net.battery              = bat
     net.voltage              = bat.max_voltage
-    
-    # Component 9 Miscellaneous Systems 
+
+    # Component 4 Miscellaneous Systems
     sys = SUAVE.Components.Systems.System()
     sys.mass_properties.mass = 5 # kg
-    
-    #------------------------------------------------------------------
-    # Design Motors
-    #------------------------------------------------------------------
-    motor                      = SUAVE.Components.Energy.Converters.Motor()
-    motor.mass_properties.mass = 200. * Units.kg 
-    motor.efficiency           = 0.935
-    motor.gear_ratio           = 1. 
-    motor.gearbox_efficiency   = 1. # Gear box efficiency     
-    motor.no_load_current      = 50.0 
-    motor.propeller_radius     = prop.tip_radius
-    motor.nominal_voltage      = 700
-    motor                      = size_optimal_motor(motor,prop)
-    net.motor                  = motor  
+ 
+    # Component 5 the Motor  
+    motor                         = SUAVE.Components.Energy.Converters.Motor()
+    motor.efficiency              = 0.95
+    motor.gearbox_efficiency      = 1.
+    # motor.origin                  = [[2.,  2.5, 0.784]]
+    motor.nominal_voltage         = bat.max_voltage *3/4
+    motor.propeller_radius        = prop.tip_radius
+    motor.no_load_current         = 330.0
+    motor                         = size_optimal_motor(motor,prop)
+    motor.mass_properties.mass    = 200. * Units.kg 
 
     # Component 6 the Payload
     payload = SUAVE.Components.Energy.Peripherals.Payload()
-    payload.power_draw           = 10. #Watts 
+    payload.power_draw           = 10. # Watts
     payload.mass_properties.mass = 1.0 * Units.kg
     net.payload                  = payload
 
     # Component 7 the Avionics
     avionics = SUAVE.Components.Energy.Peripherals.Avionics()
-    avionics.power_draw = 20. #Watts  
-    net.avionics        = avionics      
+    avionics.power_draw = 20. # Watts
+    net.avionics        = avionics
 
-    vehicle.append_component(net)  
+    # add the solar network to the vehicle
+    vehicle.append_component(net)
            
 
     # ------------------------------------------------------------------

@@ -12,13 +12,13 @@
 import SUAVE
 from SUAVE.Analyses.Mission.Segments.Conditions.State import State
 import numpy as np
-import pylab as plt
+import matplotlib.pyplot as plt 
 import time
 
 from SUAVE.Core import Units, Data
 from SUAVE.Methods.Propulsion import propeller_design
-from SUAVE.Plots.Mission_Plots import *
-from SUAVE.Plots.Geometry_Plots import * 
+from SUAVE.Plots.Performance.Mission_Plots import *
+from SUAVE.Plots.Geometry import * 
 
 from Cessna_208 import vehicle_setup, configs_setup
 
@@ -136,7 +136,7 @@ def base_analysis(vehicle):
     # ------------------------------------------------------------------
     #  Energy
     energy= SUAVE.Analyses.Energy.Energy()
-    energy.network = vehicle.propulsors 
+    energy.network = vehicle.networks
     analyses.append(energy)
 
     # ------------------------------------------------------------------
@@ -293,14 +293,15 @@ def mission_setup(analyses,vehicle):
     # Base Segment 
     base_segment = Segments.Segment()
     ones_row = base_segment.state.ones_row
-    base_segment.process.iterate.unknowns.network = vehicle.propulsors.internal_combustion.unpack_unknowns
-    base_segment.process.iterate.residuals.network = vehicle.propulsors.internal_combustion.residuals
+    base_segment.process.iterate.unknowns.network = vehicle.networks.internal_combustion.unpack_unknowns
+    base_segment.process.iterate.residuals.network = vehicle.networks.internal_combustion.residuals
     base_segment.state.unknowns.pitch_command = ones_row(1) * 0. * Units.deg  
     base_segment.state.residuals.net = 0. * ones_row(1)
     base_segment.state.numerics.number_control_points = 4
     base_segment.state.unknowns.throttle                 = 0.1   *  ones_row(1)
     base_segment.state.unknowns.rpm                      = 1900. *  ones_row(1) 
     base_segment.state.residuals.network                 = 0.    * ones_row(1)
+    # base_segment = vehicle.networks.internal_combustion.add_unknowns_and_residuals_to_segment(base_segment,rpm=1900)
 
 
     # # ------------------------------------------------------------------

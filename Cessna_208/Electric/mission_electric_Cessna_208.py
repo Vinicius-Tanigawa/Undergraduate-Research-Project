@@ -13,7 +13,7 @@ import numpy as np
 import pylab as plt 
 
 from SUAVE.Core import Units
-from SUAVE.Plots.Mission_Plots import *  
+from SUAVE.Plots.Performance.Mission_Plots import *
 from SUAVE.Core import Data, Container
 from electric_Cessna_208 import vehicle_setup, configs_setup
 from SUAVE.Methods.Performance  import payload_range
@@ -129,7 +129,7 @@ def base_analysis(vehicle):
     # ------------------------------------------------------------------
     #  Energy
     energy= SUAVE.Analyses.Energy.Energy()
-    energy.network = vehicle.propulsors 
+    energy.network = vehicle.networks
     analyses.append(energy)
 
     # ------------------------------------------------------------------
@@ -289,10 +289,10 @@ def mission_setup(analyses,vehicle):
     base_segment.process.iterate.initials.initialize_battery = SUAVE.Methods.Missions.Segments.Common.Energy.initialize_battery
     base_segment.process.iterate.conditions.planet_position  = SUAVE.Methods.skip
     base_segment.state.numerics.number_control_points        = 4
-    base_segment.process.iterate.unknowns.network            = vehicle.propulsors.battery_propeller.unpack_unknowns
-    base_segment.process.iterate.residuals.network           = vehicle.propulsors.battery_propeller.residuals
-    base_segment.state.unknowns.propeller_power_coefficient  = 0.005 * ones_row(1) 
-    base_segment.state.unknowns.battery_voltage_under_load   = vehicle.propulsors.battery_propeller.battery.max_voltage * ones_row(1)  
+    base_segment.process.iterate.unknowns.network            = vehicle.networks.battery_propeller.unpack_unknowns
+    base_segment.process.iterate.residuals.network           = vehicle.networks.battery_propeller.residuals
+    base_segment.state.unknowns.propeller_power_coefficient  = 0. * ones_row(1) 
+    base_segment.state.unknowns.battery_voltage_under_load   = vehicle.networks.battery_propeller.battery.max_voltage * ones_row(1)  
     base_segment.state.residuals.network                     = 0. * ones_row(2) 
 
 
@@ -306,7 +306,7 @@ def mission_setup(analyses,vehicle):
  
     # segment.analyses.extend( analyses.takeoff )
 
-    # segment.battery_energy  = vehicle.propulsors.battery_propeller.battery.max_energy * 0.89
+    # segment.battery_energy  = vehicle.networks.battery_propeller.battery.max_energy * 0.89
  
     # segment.altitude_start = 0.0   * Units.ft
     # segment.altitude_end   = 9000.0   * Units.ft
@@ -325,7 +325,7 @@ def mission_setup(analyses,vehicle):
 
     segment.analyses.extend( analyses.cruise )
 
-    segment.battery_energy  = vehicle.propulsors.battery_propeller.battery.max_energy * 0.89
+    segment.battery_energy  = vehicle.networks.battery_propeller.battery.max_energy * 0.89
 
     segment.altitude  = 6000. * Units.ft 
     segment.air_speed = 170 * Units['kts'] 
@@ -375,37 +375,32 @@ def missions_setup(base_mission):
 # ----------------------------------------------------------------------
 def plot_mission(results, line_style = 'bo-'):
 
-    # Plot Flight Conditions 
     plot_flight_conditions(results, line_style) 
 
-    # Plot Aerodynamic Coefficients
     plot_aerodynamic_coefficients(results, line_style) 
 
-    # Plot Aerodynamic Forces 
     plot_aerodynamic_forces(results, line_style)
 
-    # Plot Static Stability Coefficients 
     plot_stability_coefficients(results, line_style)  
 
-    # Drag Components
     plot_drag_components(results, line_style)
 
-    # Plot Aircraft Flight Speed
     plot_aircraft_velocities(results, line_style)
 
-    # Plot Altitude, sfc, vehicle weight 
-    plot_altitude_sfc_weight(results, line_style)   
+    plot_altitude_sfc_weight(results, line_style)  
 
-    # Plot Aircraft Electronics
-    plot_electronic_conditions(results, line_style)
+    plot_battery_pack_conditions(results, line_style)
+
+    plot_battery_cell_conditions(results, line_style)
+
+    plot_battery_degradation(results, line_style)
+
+    plot_lift_cruise_network(results, line_style)
     
-    # Plot Propeller Conditions 
     plot_propeller_conditions(results, line_style) 
     
-    # Plot Electric Motor and Propeller Efficiencies 
     plot_eMotor_Prop_efficiencies(results, line_style)
     
-    # Plot propeller Disc and Power Loading
     plot_disc_power_loading(results, line_style) 
 
     
