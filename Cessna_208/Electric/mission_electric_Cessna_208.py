@@ -15,6 +15,8 @@ import pylab as plt
 from SUAVE.Core import Units
 from SUAVE.Plots.Performance.Mission_Plots import *
 from SUAVE.Core import Data, Container
+from SUAVE.Components.Energy.Networks.Battery_Propeller import Battery_Propeller
+from SUAVE.Methods.Power.Battery.Sizing         import initialize_from_mass
 from electric_Cessna_208 import vehicle_setup, configs_setup
 from SUAVE.Methods.Performance  import payload_range
 from SUAVE.Input_Output.Results import  print_parasite_drag,  \
@@ -30,12 +32,14 @@ from SUAVE.Input_Output.Results import  print_parasite_drag,  \
 def main():
     """This function gets the vehicle configuration, analysis settings, and then runs the mission.
     Once the mission is complete, the results are plotted."""
+
+    battery_chemistry  =  ['NMC','LFP']
     
     # Extract vehicle configurations and the analysis settings that go with them
-    configs, analyses = full_setup()
+    configs, analyses = full_setup(battery_chemistry)
 
     # Size each of the configurations according to a given set of geometry relations
-    simple_sizing(configs)
+    # simple_sizing(configs)
 
     # Perform operations needed to make the configurations and analyses usable in the mission
     configs.finalize()
@@ -57,12 +61,36 @@ def main():
 #   Analysis Setup
 # ----------------------------------------------------------------------
 
-def full_setup():
+def full_setup(battery_chemistry):
     """This function gets the baseline vehicle and creates modifications for different 
     configurations, as well as the mission and analyses to go with those configurations."""
 
     # Collect baseline vehicle data and changes when using different configuration settings
     vehicle  = vehicle_setup()
+
+# Modify  Battery  
+    net = vehicle.networks.battery_propeller
+    bat = net.battery 
+    if battery_chemistry == 'NMC': 
+        bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion_LiNiMnCoO2_18650()  
+    elif battery_chemistry == 'LFP': 
+        bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion_LiFePO4_18650()  
+    
+    bat.mass_properties.mass = 500. * Units.kg  
+    bat.max_voltage          = 500.             
+    initialize_from_mass(bat)
+    
+    # Assume a battery pack module shape. This step is optional but
+    # required for thermal analysis of the pack
+    number_of_modules                = 10
+    bat.module_config.total          = int(np.ceil(bat.pack_config.total/number_of_modules))
+    bat.module_config.normal_count   = int(np.ceil(bat.module_config.total/bat.pack_config.series))
+    bat.module_config.parallel_count = int(np.ceil(bat.module_config.total/bat.pack_config.parallel))
+    net.battery                      = bat      
+    
+    net.battery              = bat
+    net.voltage              = bat.max_voltage    
+
     configs  = configs_setup(vehicle)
 
     # Get the analyses to be used when different configurations are evaluated
@@ -111,6 +139,12 @@ def base_analysis(vehicle):
     weights.vehicle = vehicle
     weights.settings.empty_weight_increment = 0.
     analyses.append(weights)
+
+    # ------------------------------------------------------------------
+    #  Basic Geometry Relations
+    sizing = SUAVE.Analyses.Sizing.Sizing()
+    sizing.features.vehicle = vehicle
+    analyses.append(sizing)
 
     # ------------------------------------------------------------------
     #  Aerodynamics Analysis
@@ -217,43 +251,43 @@ def configs_setup(vehicle):
 
     return configs
 
-def simple_sizing(configs):
-    """This function applies a few basic geometric sizing relations and modifies the landing
-    configuration."""
+# def simple_sizing(configs):
+#     """This function applies a few basic geometric sizing relations and modifies the landing
+#     configuration."""
 
-    base = configs.base
-    # Update the baseline data structure to prepare for changes
-    base.pull_base()
+#     base = configs.base
+#     # Update the baseline data structure to prepare for changes
+#     base.pull_base()
 
-    # Revise the zero fuel weight. This will only affect the base configuration. To do all
-    # configurations, this should be specified in the top level vehicle definition.
-    base.mass_properties.max_zero_fuel = 0.9 * base.mass_properties.max_takeoff 
+#     # Revise the zero fuel weight. This will only affect the base configuration. To do all
+#     # configurations, this should be specified in the top level vehicle definition.
+#     base.mass_properties.max_zero_fuel = 0.9 * base.mass_properties.max_takeoff 
 
-    # Estimate wing areas
-    for wing in base.wings:
-        wing.areas.wetted   = 2.0 * wing.areas.reference
-        wing.areas.exposed  = 0.8 * wing.areas.wetted
-        wing.areas.affected = 0.6 * wing.areas.wetted
+#     # Estimate wing areas
+#     for wing in base.wings:
+#         wing.areas.wetted   = 2.0 * wing.areas.reference
+#         wing.areas.exposed  = 0.8 * wing.areas.wetted
+#         wing.areas.affected = 0.6 * wing.areas.wetted
 
-    # Store how the changes compare to the baseline configuration
-    base.store_diff()
+#     # Store how the changes compare to the baseline configuration
+#     base.store_diff()
 
-    # ------------------------------------------------------------------
-    #   Landing Configuration
-    # ------------------------------------------------------------------
-    landing = configs.landing
+#     # ------------------------------------------------------------------
+#     #   Landing Configuration
+#     # ------------------------------------------------------------------
+#     landing = configs.landing
 
-    # Make sure base data is current
-    landing.pull_base()
+#     # Make sure base data is current
+#     landing.pull_base()
 
-    # Add a landing weight parameter. This is used in field length estimation and in
-    # initially the landing mission segment type.
-    landing.mass_properties.landing = 0.85 * base.mass_properties.takeoff
+#     # Add a landing weight parameter. This is used in field length estimation and in
+#     # initially the landing mission segment type.
+#     landing.mass_properties.landing = 0.85 * base.mass_properties.takeoff
 
-    # Store how the changes compare to the baseline configuration
-    landing.store_diff()
+#     # Store how the changes compare to the baseline configuration
+#     landing.store_diff()
 
-    return
+#     return
 
 
 # ----------------------------------------------------------------------
@@ -286,14 +320,19 @@ def mission_setup(analyses,vehicle):
     # base segment
     base_segment = Segments.Segment()
     ones_row     = base_segment.state.ones_row
-    base_segment.process.iterate.initials.initialize_battery = SUAVE.Methods.Missions.Segments.Common.Energy.initialize_battery
+    base_segment.process.initialize.initialize_battery                        = SUAVE.Methods.Missions.Segments.Common.Energy.initialize_battery 
+    base_segment.process.finalize.post_process.update_battery_state_of_health = SUAVE.Methods.Missions.Segments.Common.Energy.update_battery_state_of_health
     base_segment.process.iterate.conditions.planet_position  = SUAVE.Methods.skip
     base_segment.state.numerics.number_control_points        = 4
-    base_segment.process.iterate.unknowns.network            = vehicle.networks.battery_propeller.unpack_unknowns
-    base_segment.process.iterate.residuals.network           = vehicle.networks.battery_propeller.residuals
-    base_segment.state.unknowns.propeller_power_coefficient  = 0. * ones_row(1) 
-    base_segment.state.unknowns.battery_voltage_under_load   = vehicle.networks.battery_propeller.battery.max_voltage * ones_row(1)  
-    base_segment.state.residuals.network                     = 0. * ones_row(2) 
+    base_segment.battery_age_in_days                         = 1 # optional but added for regression
+    base_segment.temperature_deviation                       = 1 # Kelvin #  optional but added for regression
+    # base_segment.process.iterate.unknowns.network            = SUAVE.Methods.skip
+    # base_segment.process.iterate.residuals.network           = SUAVE.Methods.skip
+    # base_segment.state.unknowns.propeller_power_coefficient  = 0. * ones_row(1) 
+    # base_segment.state.unknowns.battery_voltage_under_load   = vehicle.networks.battery_propeller.battery.max_voltage * ones_row(1)  
+    # base_segment.state.residuals.network                     = 0. * ones_row(2) 
+
+    # bat                                                      = vehicle.networks.battery_cell.battery
 
 
 
@@ -323,15 +362,15 @@ def mission_setup(analyses,vehicle):
     segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
     segment.tag = "cruise"
 
-    segment.analyses.extend( analyses.cruise )
+    segment.analyses.extend( analyses.base )
 
-    segment.battery_energy  = vehicle.networks.battery_propeller.battery.max_energy * 0.89
+    # segment.battery_energy  = vehicle.networks.battery_propeller.battery.max_energy * 0.89
 
     segment.altitude  = 6000. * Units.ft 
     segment.air_speed = 170 * Units['kts'] 
     segment.distance  = 200 * Units.nmi
-    
-    # segment.state.numerics.number_control_points = 10
+
+    segment = vehicle.networks.battery_propeller.add_unknowns_and_residuals_to_segment(segment)
 
     # add to mission
     mission.append_segment(segment)

@@ -496,8 +496,7 @@ def vehicle_setup():
     #---------------------------------------------------------------------------------------------
     # build network
     net = Battery_Propeller()
-    net.number_of_propeller_engines  = 1. 
-    net.identical_propellers         = True 
+    net.number_of_propeller_engines  = 1 
 
     # Component 1 the ESC
     esc = SUAVE.Components.Energy.Distributors.Electronic_Speed_Controller()
@@ -506,7 +505,6 @@ def vehicle_setup():
 
     # Component 2 the Propeller 
     prop = SUAVE.Components.Energy.Converters.Propeller()
-    prop.tag = 'propeller_1'
     prop.number_of_blades       = 3.0
     prop.freestream_velocity    = 90.*Units.knots
     prop.angular_velocity       = 1900.  * Units.rpm
@@ -532,7 +530,9 @@ def vehicle_setup():
 
 
     # Component 3 the Battery
-    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion_LiNiMnCoO2_18650()
+    # net                           = SUAVE.Components.Energy.Networks.Battery_Cell_Cycler()
+    bat = SUAVE.Components.Energy.Storages.Batteries.Constant_Mass.Lithium_Ion()
+    net.tag                       ='battery_cell'
     bat.mass_properties.mass = 500. * Units.kg  
     bat.max_voltage          = 800. 
     initialize_from_mass(bat)
@@ -588,63 +588,64 @@ def configs_setup(vehicle):
     configs                                                    = SUAVE.Components.Configs.Config.Container() 
     base_config                                                = SUAVE.Components.Configs.Config(vehicle)
     base_config.tag                                            = 'base'
+    base_config.networks.battery_propeller.pitch_command = 0
     configs.append(base_config)
     
-    # ------------------------------------------------------------------
-    #   Cruise Configuration
-    # ------------------------------------------------------------------ 
-    config                                                     = SUAVE.Components.Configs.Config(base_config)
-    config.tag                                                 = 'cruise'
-    config.wings.main_wing.flaps.angle                         = 00 * Units['degree']
-    configs.append(config)
+#     # ------------------------------------------------------------------
+#     #   Cruise Configuration
+#     # ------------------------------------------------------------------ 
+#     config                                                     = SUAVE.Components.Configs.Config(base_config)
+#     config.tag                                                 = 'cruise'
+#     config.wings.main_wing.flaps.angle                         = 00 * Units['degree']
+#     configs.append(config)
     
     
-    # ------------------------------------------------------------------
-    #   Takeoff Configuration
-    # ------------------------------------------------------------------ 
-    config                                                     = SUAVE.Components.Configs.Config(base_config)
-    config.tag                                                 = 'takeoff' 
-    config.wings['main_wing'].control_surfaces.flap.deflection = 20. * Units.deg
-    config.propulsors.network.propeller_speed                  = 1900 * Units['rpm']
-#    config.V2_VS_ratio                                         = 1.21
-#    config.maximum_lift_coefficient                            = 2.
+#     # ------------------------------------------------------------------
+#     #   Takeoff Configuration
+#     # ------------------------------------------------------------------ 
+#     config                                                     = SUAVE.Components.Configs.Config(base_config)
+#     config.tag                                                 = 'takeoff' 
+#     config.wings['main_wing'].control_surfaces.flap.deflection = 20. * Units.deg
+#     config.propulsors.network.propeller_speed                  = 1900 * Units['rpm']
+# #    config.V2_VS_ratio                                         = 1.21
+# #    config.maximum_lift_coefficient                            = 2.
     
-    configs.append(config)
+#     configs.append(config)
 
 
-    # ------------------------------------------------------------------
-    #   Approach Configurations
-    # ------------------------------------------------------------------
+#     # ------------------------------------------------------------------
+#     #   Approach Configurations
+#     # ------------------------------------------------------------------
     
-    config = SUAVE.Components.Configs.Config(base_config)
-    config.tag                                                 = 'approach'
-    config.wings.main_wing.flaps.angle                         = 30 * Units['degree']
-    config.propulsors.network.propeller_speed                  = 1750 * Units['rpm']
-    configs.append(config)
+#     config = SUAVE.Components.Configs.Config(base_config)
+#     config.tag                                                 = 'approach'
+#     config.wings.main_wing.flaps.angle                         = 30 * Units['degree']
+#     config.propulsors.network.propeller_speed                  = 1750 * Units['rpm']
+#     configs.append(config)
     
     
-    # ------------------------------------------------------------------
-    #   Landing Configuration
-    # ------------------------------------------------------------------
+#     # ------------------------------------------------------------------
+#     #   Landing Configuration
+#     # ------------------------------------------------------------------
 
-    config                                                     = SUAVE.Components.Configs.Config(base_config)
-    config.tag                                                 = 'landing' 
-    config.wings['main_wing'].control_surfaces.flap.deflection = 20. * Units.deg
-    config.Vref_VS_ratio                                       = 1.23
-    config.maximum_lift_coefficient                            = 2.
+#     config                                                     = SUAVE.Components.Configs.Config(base_config)
+#     config.tag                                                 = 'landing' 
+#     config.wings['main_wing'].control_surfaces.flap.deflection = 20. * Units.deg
+#     config.Vref_VS_ratio                                       = 1.23
+#     config.maximum_lift_coefficient                            = 2.
                                                                
-    configs.append(config)
+#     configs.append(config)
 
 
-    # ------------------------------------------------------------------
-    #   Stall Configuration
-    # ------------------------------------------------------------------
+#     # ------------------------------------------------------------------
+#     #   Stall Configuration
+#     # ------------------------------------------------------------------
 
-    config = SUAVE.Components.Configs.Config(base_config)
-    config.tag                                                 = 'stall'
-    config.wings.main_wing.flaps.angle                         = 30 * Units['degree']
-    config.propulsors.network.propeller_speed                  = 1900 * Units['rpm']    
-    configs.append(config)
+#     config = SUAVE.Components.Configs.Config(base_config)
+#     config.tag                                                 = 'stall'
+#     config.wings.main_wing.flaps.angle                         = 30 * Units['degree']
+#     config.propulsors.network.propeller_speed                  = 1900 * Units['rpm']    
+#     configs.append(config)
     
     
     return configs

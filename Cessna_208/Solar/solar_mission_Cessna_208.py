@@ -13,10 +13,12 @@ import pylab as plt
 import time
 
 from SUAVE.Core import Units, Data
-from SUAVE.Plots.Mission_Plots import *
-from SUAVE.Plots.Geometry_Plots import * 
+from SUAVE.Plots.Performance.Mission_Plots import *
 from SUAVE.Components.Energy.Networks.Solar import Solar
 from solar_Cessna_208 import vehicle_setup, configs_setup
+from SUAVE.Methods.Propulsion import propeller_design
+from SUAVE.Methods.Propulsion import propeller_design
+from SUAVE.Methods.Power.Battery.Sizing import initialize_from_mass
 
 
 # ----------------------------------------------------------------------
@@ -126,7 +128,7 @@ def base_analysis(vehicle):
     # ------------------------------------------------------------------
     #  Energy
     energy= SUAVE.Analyses.Energy.Energy()
-    energy.network = vehicle.propulsors 
+    energy.network = vehicle.networks 
     analyses.append(energy)
 
     # ------------------------------------------------------------------
@@ -281,13 +283,8 @@ def mission_setup(analyses,vehicle):
     Segments = SUAVE.Analyses.Mission.Segments
 
     # Base Segment 
-    base_segment = Segments.Segment()
-    ones_row = base_segment.state.ones_row
-    base_segment.process.iterate.unknowns.network            = vehicle.propulsors.solar.unpack_unknowns
-    base_segment.process.iterate.residuals.network           = vehicle.propulsors.solar.residuals    
-    base_segment.process.iterate.initials.initialize_battery = SUAVE.Methods.Missions.Segments.Common.Energy.initialize_battery
-    base_segment.state.unknowns.propeller_power_coefficient  = vehicle.propulsors.solar.propeller.design_power_coefficient  * ones_row(1)/15.
-    base_segment.state.residuals.network                     = 0. * ones_row(1) 
+    base_segment = Segments.Segment() 
+    base_segment.process.iterate.initials.initialize_battery = SUAVE.Methods.Missions.Segments.Common.Energy.initialize_battery 
 
 
     # # ------------------------------------------------------------------
@@ -382,9 +379,11 @@ def mission_setup(analyses,vehicle):
     segment.altitude  = 6000 * Units.ft
     segment.air_speed = 167 * Units['kts'] 
     segment.distance  = 200 * Units.nmi
-    segment.battery_energy = vehicle.propulsors.solar.battery.max_energy*0.8 #Charge the battery to start
+    segment.battery_energy = vehicle.networks.solar.battery.max_energy*0.8 #Charge the battery to start
     segment.latitude       = 37.4300   # this defaults to degrees (do not use Units.degrees)
     segment.longitude      = -122.1700 # this defaults to degrees
+
+    segment = vehicle.networks.solar.add_unknowns_and_residuals_to_segment(segment,initial_power_coefficient = 0.05)
     
     segment.state.numerics.number_control_points = 64
 
@@ -518,12 +517,12 @@ def plot_mission(results, line_style = 'bo-'):
     plot_aircraft_velocities(results, line_style)
 
     # Plot Altitude, sfc, vehicle weight 
-    plot_altitude_sfc_weight(results, line_style)  
-
-    plot_disc_power_loading(results, line_style) 
+    plot_altitude_sfc_weight(results, line_style) 
 
     # Plot Aircraft Electronics
-    plot_electronic_conditions(results, line_style)
+    plot_battery_pack_conditions(results) 
+
+    plot_disc_power_loading(results, line_style) 
 
     plot_propeller_conditions(results, line_style)
 
@@ -531,18 +530,6 @@ def plot_mission(results, line_style = 'bo-'):
     plot_eMotor_Prop_efficiencies(results, line_style)
 
     plot_solar_flux(results, line_style)
-
-    # plot_lift_cruise_network(results, line_style)
-
-    # plot_surface_pressure_contours(results, line_style)
-
-    # plot_lift_distribution(results, line_style)
-
-    # create_video_frames(results, line_style)
-
-    # plot_noise_level(results, line_style)
-
-    # plot_flight_profile_noise_contour(results, line_style)
     
     return 
 
