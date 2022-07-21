@@ -1,2 +1,0 @@
-
-from Weights import Weights

@@ -1,2 +1,0 @@
-Altitude:    0 ft 
-TOFL      CLIMB GRADIENT     THRUST    L/D     L/Dv2    CDasym    CDwindm     CL     CD  CG_CORRECT
